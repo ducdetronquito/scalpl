@@ -1,0 +1,6 @@
+__pycache__/*
+build/*
+dist/*
+scalpl.egg-info/*
+tests/*
+*.pyc
