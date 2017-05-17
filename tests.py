@@ -1,0 +1,185 @@
+from scalpl import Cut
+
+from copy import deepcopy
+import unittest
+
+
+class TestDictProxiedMethods(unittest.TestCase):
+    """
+        Here lives tests of dict methods that are simply proxied by glance.
+    """
+    BASE = {
+        'Catz': 'Meoww',
+        'Dogz': 'Waff',
+        'Fishz': 'Blubz'
+    }
+
+    def setUp(self):
+        self.data = Cut(deepcopy(self.BASE))
+
+    def test_bool(self):
+        assert bool(self.data) is True
+
+    def test_clear(self):
+        self.data.clear()
+        assert len(self.data) == 0
+
+    def test_copy(self):
+        assert self.data.copy() == {
+            'Catz': 'Meoww',
+            'Dogz': 'Waff',
+            'Fishz': 'Blubz'
+        }
+
+    def test_delete_key(self):
+        l = self.data.copy()
+        del l['Catz']
+        assert 'Catz' not in l
+
+    def test_equalty_with_Cut(self):
+        other = Cut(self.data.copy())
+        assert self.data == other
+
+    def test_equalty_with_dict(self):
+        other = self.data.copy()
+        assert self.data == other
+
+    def test_inequalty_with_Cut(self):
+        other = Cut({
+            'Catz': 'Meoww',
+            'Dogz': 'Waff',
+            'Snakz': 'Kzzz'
+        })
+        assert self.data != other
+
+    def test_inequalty_with_dict(self):
+        other = {
+            'Catz': 'Meoww',
+            'Dogz': 'Waff',
+            'Snakz': 'Kzzz'
+        }
+        assert self.data != other
+
+    def test_items(self):
+        result = sorted(self.data.items())
+        expected = [('Catz', 'Meoww'), ('Dogz', 'Waff'), ('Fishz', 'Blubz')]
+        self.assertListEqual(result, expected)
+
+    def test_keys(self):
+        result = sorted(self.data.keys())
+        expected = ['Catz', 'Dogz', 'Fishz']
+        self.assertListEqual(result, expected)
+
+    def test_len(self):
+        assert len(self.data) == 3
+
+    def test_popitem(self):
+        self.data.popitem()
+        assert len(self.data) == 2
+
+    def test_values(self):
+        result = sorted(self.data.values())
+        expected = ['Blubz', 'Meoww', 'Waff']
+        self.assertListEqual(result, expected)
+
+
+class TestDictOverridenMethods(unittest.TestCase):
+    """
+        Here lives tests of dict methods where glance adds its custom logic
+        to handle access to nested dictionnaries.
+    """
+    BASE = {
+        'users': {
+            'john': {
+                'age': 666,
+                'sex': None,
+            }
+        }
+    }
+
+    def setUp(self):
+        self.data = Cut(deepcopy(self.BASE))
+
+    def test_short_get_undefined_key(self):
+        with self.assertRaises(KeyError):
+            self.data['admins']
+
+        with self.assertRaises(KeyError):
+            self.data['users:jack']
+
+        with self.assertRaises(KeyError):
+            self.data['users:john:email']
+
+    def test_short_get(self):
+        assert self.data['users'] == {'john': {'age': 666, 'sex': None}}
+        assert self.data['users:john'] == {'age': 666, 'sex': None}
+        assert self.data['users:john:age'] == 666
+
+    def test_short_get_with_custom_separator(self):
+        self.data = Cut(deepcopy(self.BASE), sep='+')
+        assert self.data['users'] == {'john': {'age': 666, 'sex': None}}
+        assert self.data['users+john'] == {'age': 666, 'sex': None}
+        assert self.data['users+john+age'] == 666
+
+    def test_set(self):
+        data = Cut()
+        data['users:john:age'] = 666
+        assert data['users']['john']['age'] == 666
+
+    def test_setdefault_on_undefined_key(self):
+        data = Cut()
+        assert data.setdefault('users:john:age', 666) == 666
+        assert data['users']['john']['age'] == 666
+
+    def test_in(self):
+        assert 'users' in self.data
+        assert 'users:john' in self.data
+        assert 'users:john:age' in self.data
+        assert 'users:john:sex' in self.data
+
+    def test_not_in(self):
+        assert 'admins' not in self.data
+        assert 'users:jack' not in self.data
+        assert 'users:john:email' not in self.data
+
+    def test_pop(self):
+        data = Cut({
+            'users': {
+                'john': {
+                    'age': 666,
+                }
+            }
+        })
+        assert data.pop('users:john:age') == 666
+        assert 'users:john:age' not in data
+
+    def test_update_from_dict(self):
+        data = Cut()
+        from_other = {'user:john:age': 666}
+        data.update(from_other)
+        assert data['user:john:age'] == 666
+
+    def test_update_from_dict_and_keyword_args(self):
+        data = Cut()
+        from_other = {'user:john:age': 666}
+        data.update(from_other, admin='jack')
+        assert data['user:john:age'] == 666
+        assert data['admin'] == 'jack'
+
+    def test_update_from_list(self):
+        data = Cut()
+        from_other = [('user:john:age', 666)]
+        data.update(from_other)
+        assert data['user:john:age'] == 666
+
+    def test_update_from_list_and_keyword_args(self):
+        data = Cut()
+        data = Cut()
+        from_other = [('user:john:age', 666)]
+        data.update(from_other, admin='jack')
+        assert data['user:john:age'] == 666
+        assert data['admin'] == 'jack'
+
+
+if __name__ == '__main__':
+    unittest.main()
