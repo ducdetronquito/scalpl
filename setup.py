@@ -1,10 +1,10 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='scalpl',
     py_modules=['scalpl'],
     version='0.1',
-    description='This package definitely needs a proper description',
+    description='A minimalist tool to operate on nested dictionaries.',
     author='Guillaume Paulet',
     author_email='guillaume.paulet@giome.fr',
     license='Public Domain',

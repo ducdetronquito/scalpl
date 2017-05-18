@@ -7,9 +7,11 @@ from itertools import chain
 # TODO:
 #  - Add proper description
 #  - Add proper README/DOC
+#  - Add type annotation
 #  - Publish on Pypi
 #  - Is it interesting use Cut inside a context manager ?
 #  - Is it possible to use scalpl with dict subclasses ?
+#  - Is it worth it to add a way yo handle Lists ?
 
 
 class Cut:
@@ -92,6 +94,7 @@ class Cut:
 
     @staticmethod
     def all(dicts, sep: str=':'):
+        """Proxy each dictionary from an Iterable."""
         return (Cut(_dict, sep) for _dict in dicts)
 
     def clear(self):
