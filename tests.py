@@ -1,12 +1,13 @@
 from scalpl import Cut
 
 from copy import deepcopy
+from types import GeneratorType
 import unittest
 
 
 class TestDictProxiedMethods(unittest.TestCase):
     """
-        Here lives tests of dict methods that are simply proxied by glance.
+        Here lives tests of dict methods that are simply proxied by scalpl.
     """
     BASE = {
         'Catz': 'Meoww',
@@ -43,6 +44,27 @@ class TestDictProxiedMethods(unittest.TestCase):
     def test_equalty_with_dict(self):
         other = self.data.copy()
         assert self.data == other
+
+    def test_fromkeys(self):
+        expected = {
+            'Catz': 'Lulz',
+            'Dogz': 'Lulz',
+            'Fishz': 'Lulz',
+        }
+
+        seq = ['Catz', 'Dogz', 'Fishz']
+        value = 'Lulz'
+        assert Cut.fromkeys(seq, value) == expected
+
+    def test_fromkeys_default(self):
+        expected = {
+            'Catz': None,
+            'Dogz': None,
+            'Fishz': None,
+        }
+
+        seq = ['Catz', 'Dogz', 'Fishz']
+        assert Cut.fromkeys(seq) == expected
 
     def test_inequalty_with_Cut(self):
         other = Cut({
@@ -83,10 +105,10 @@ class TestDictProxiedMethods(unittest.TestCase):
         self.assertListEqual(result, expected)
 
 
-class TestDictOverridenMethods(unittest.TestCase):
+class TestDictMethodsWithCustomLogic(unittest.TestCase):
     """
-        Here lives tests of dict methods where glance adds its custom logic
-        to handle access to nested dictionnaries.
+        Here lives tests of dict methods where scalpl adds its custom logic
+        to handle operate on nested dictionnaries.
     """
     BASE = {
         'users': {
@@ -100,7 +122,22 @@ class TestDictOverridenMethods(unittest.TestCase):
     def setUp(self):
         self.data = Cut(deepcopy(self.BASE))
 
-    def test_short_get_undefined_key(self):
+    def test_get(self):
+        assert self.data.get('users') == {'john': {'age': 666, 'sex': None}}
+        assert self.data.get('users:john') == {'age': 666, 'sex': None}
+        assert self.data.get('users:john:age') == 666
+
+    def test_get_undefined_key(self):
+        assert self.data.get('admins', 'default') == 'default'
+        assert self.data.get('users:jack', 'default') == 'default'
+        assert self.data.get('users:john:email', 'default') == 'default'
+
+    def test_getitem(self):
+        assert self.data['users'] == {'john': {'age': 666, 'sex': None}}
+        assert self.data['users:john'] == {'age': 666, 'sex': None}
+        assert self.data['users:john:age'] == 666
+
+    def test_getitem_undefined_key(self):
         with self.assertRaises(KeyError):
             self.data['admins']
 
@@ -110,26 +147,11 @@ class TestDictOverridenMethods(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.data['users:john:email']
 
-    def test_short_get(self):
-        assert self.data['users'] == {'john': {'age': 666, 'sex': None}}
-        assert self.data['users:john'] == {'age': 666, 'sex': None}
-        assert self.data['users:john:age'] == 666
-
-    def test_short_get_with_custom_separator(self):
+    def test_getitem_with_custom_separator(self):
         self.data = Cut(deepcopy(self.BASE), sep='+')
         assert self.data['users'] == {'john': {'age': 666, 'sex': None}}
         assert self.data['users+john'] == {'age': 666, 'sex': None}
         assert self.data['users+john+age'] == 666
-
-    def test_set(self):
-        data = Cut()
-        data['users:john:age'] = 666
-        assert data['users']['john']['age'] == 666
-
-    def test_setdefault_on_undefined_key(self):
-        data = Cut()
-        assert data.setdefault('users:john:age', 666) == 666
-        assert data['users']['john']['age'] == 666
 
     def test_in(self):
         assert 'users' in self.data
@@ -152,6 +174,16 @@ class TestDictOverridenMethods(unittest.TestCase):
         })
         assert data.pop('users:john:age') == 666
         assert 'users:john:age' not in data
+
+    def test_set(self):
+        data = Cut()
+        data['users:john:age'] = 666
+        assert data['users']['john']['age'] == 666
+
+    def test_setdefault_on_undefined_key(self):
+        data = Cut()
+        assert data.setdefault('users:john:age', 666) == 666
+        assert data['users']['john']['age'] == 666
 
     def test_update_from_dict(self):
         data = Cut()
@@ -179,6 +211,27 @@ class TestDictOverridenMethods(unittest.TestCase):
         data.update(from_other, admin='jack')
         assert data['user:john:age'] == 666
         assert data['admin'] == 'jack'
+
+
+class TestCutOwnAPI(unittest.TestCase):
+
+    def setUp(self):
+        self.john = {'name': 'John'}
+        self.joe = {'name': 'Joe'}
+        self.users = [self.joe, self.john]
+
+    def test_all_returns_generator(self):
+        result = Cut.all(self.users)
+        assert isinstance(result, GeneratorType) is True
+        result = list(result)
+        assert result[0].data == self.joe
+        assert result[1].data == self.john
+
+    def test_all_with_custom_separator(self):
+        result = Cut.all(self.users, sep='/')
+        result = list(result)
+        assert result[0].sep == '/'
+        assert result[1].sep == '/'
 
 
 if __name__ == '__main__':
