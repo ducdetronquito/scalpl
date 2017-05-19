@@ -38,18 +38,18 @@ data = {
             'type': ['Grass', 'Poison'],
             'category': 'Seed',
             'ability': 'Overgrow'
-        }
+        },
         'Charmander': {
             'type': 'Fire',
             'category': 'Lizard',
             'ability': 'Blaze',
-        }
+        },
         'Squirtle': {
             'type': 'Water',
             'category': 'Tiny Turtle',
             'ability': 'Torrent',
         }
-    }
+    },
     'trainers': {
         'Ash': {
             'hometown': 'Pallet Town'
@@ -98,7 +98,7 @@ By the way, if you have to operate on a list of dictionaries,
 the `Cut.all` method is what you are looking for.
 
 ```Python
-pokemons = proxy['pokemons']
+pokemons = proxy['pokemons'].values()
 # Let's teach these pokemons some sick moves !
 for pokemon in Cut.all(pokemons):
     pokemon['moves:Scratch:power'] = 40
@@ -111,7 +111,7 @@ proxy.pop('pokemons:Bulbasaur:category')
 # 'Seed'
 proxy.popitem()
 # ('trainers', {...})
-del proxy['pokemons:Charamander:type']
+del proxy['pokemons:Charmander:type']
 ```
 
 Because **Scalpl** is only a proxy over your data, it means you can get 

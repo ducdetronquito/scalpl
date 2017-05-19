@@ -46,22 +46,22 @@ class TestDictProxiedMethods(unittest.TestCase):
         assert self.data == other
 
     def test_fromkeys(self):
-        expected = {
+        expected = Cut({
             'Catz': 'Lulz',
             'Dogz': 'Lulz',
             'Fishz': 'Lulz',
-        }
+        })
 
         seq = ['Catz', 'Dogz', 'Fishz']
         value = 'Lulz'
         assert Cut.fromkeys(seq, value) == expected
 
     def test_fromkeys_default(self):
-        expected = {
+        expected = Cut({
             'Catz': None,
             'Dogz': None,
             'Fishz': None,
-        }
+        })
 
         seq = ['Catz', 'Dogz', 'Fishz']
         assert Cut.fromkeys(seq) == expected
