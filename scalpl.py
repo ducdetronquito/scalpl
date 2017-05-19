@@ -5,8 +5,6 @@
 from itertools import chain
 
 # TODO:
-#  - Add proper description
-#  - Add proper README/DOC
 #  - Add type annotation
 #  - Publish on Pypi
 #  - Is it interesting use Cut inside a context manager ?

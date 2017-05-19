@@ -1,8 +1,14 @@
-# Scalpl
+<p align="center">
+    <img src="scalpl.png">
+    <h1 align="center">Scalpl</h1>
+</p>
 
 **Scalpl** provides a **lightweight proxy** that helps you to operate on 
 **nested dictionaries** seamlessly **through the built-in** `dict` **API**, 
 by using colon-separated string keys.
+
+It's not a drop-in replacement for your dictionnaries, just syntactic sugar
+to avoid `this['annoying']['kind']['of']['things']`.
 
 No conversion cost, a thin computation overhead: that's **Scalpl**
 in a nutshell.
@@ -50,7 +56,7 @@ data = {
         }
     }
 }
-# Ok, now we need to go deeper...
+# Just wrap your data, and you're ready to go deeper !
 proxy = Cut(data)
 ```
 
@@ -107,6 +113,17 @@ proxy.popitem()
 # ('trainers', {...})
 del proxy['pokemons:Charamander:type']
 ```
+
+Because **Scalpl** is only a proxy over your data, it means you can get 
+it back at will without any conversion cost. If you use an external API
+that operates on dictionary, it will just work.
+
+```Python
+import json
+json.dumps(proxy.data)
+# "{'pokemons': {...}}"
+```
+
 
 Finally, you can retrieve a shallow copy of the inner dictionary
 or remove all keys.
