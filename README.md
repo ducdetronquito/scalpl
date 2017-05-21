@@ -3,12 +3,12 @@
     <h1 align="center">Scalpl</h1>
 </p>
 
-**Scalpl** provides a **lightweight proxy** that helps you to operate on 
+**Scalpl** provides a **lightweight wrapper** that helps you to operate on
 **nested dictionaries** seamlessly **through the built-in** `dict` **API**, 
 by using colon-separated string keys.
 
 It's not a drop-in replacement for your dictionnaries, just syntactic sugar
-to avoid `this['annoying']['kind']['of']['things']`.
+to avoid `this['annoying']['kind']['of']['things']` and `prefer['a:different:approach']`.
 
 No conversion cost, a thin computation overhead: that's **Scalpl**
 in a nutshell.
@@ -26,6 +26,10 @@ pip3 install scalpl
 [API](https://docs.python.org/3/library/stdtypes.html#dict).
 Do not hesitate to take a look at it : you might find some cool 
 features you didn't know about :)
+
+**Scalpl** can wrap around your `dict`, `collections.defaultdict` or `collections.OrderedDict`.
+By default, it uses colon as a key separator, but you are free to use
+a different character that better suits your needs.
 
 Let's see what it looks like with a toy dictionary ! 👇
 
@@ -114,7 +118,7 @@ proxy.popitem()
 del proxy['pokemons:Charmander:type']
 ```
 
-Because **Scalpl** is only a proxy over your data, it means you can get 
+Because **Scalpl** is only a wrapper around your data, it means you can get 
 it back at will without any conversion cost. If you use an external API
 that operates on dictionary, it will just work.
 

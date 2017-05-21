@@ -1,18 +1,17 @@
 """
-    A minimalist tool to operate on nested dictionaries.
+    A lightweight wrapper to operate on nested dictionaries seamlessly.
 """
 from typing import Any, Iterator, List, Optional
 from itertools import chain
 
 # TODO:
-#  - Test scalpl with dict subclasses ?
 #  - Is it worth it to add a way to handle Lists ?
 #  - Is it interesting use Cut inside a context manager ?
 
 
 class Cut:
     """
-        Cut is a simple proxy over the built-in dict class.
+        Cut is a simple wrapper over the built-in dict class.
 
         It enables the standard dict API to operate on nested dictionnaries
         by using colon-separated string keys.
@@ -90,7 +89,7 @@ class Cut:
 
     @staticmethod
     def all(dicts: Iterator[dict], sep: str=':') -> Iterator['Cut']:
-        """Proxy each dictionary from an Iterable."""
+        """Wrap each dictionary from an Iterable."""
         return (Cut(_dict, sep) for _dict in dicts)
 
     def clear(self) -> None:

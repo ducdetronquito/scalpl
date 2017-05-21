@@ -4,8 +4,10 @@ from copy import deepcopy
 from types import GeneratorType
 import unittest
 
+from collections import defaultdict, OrderedDict
 
-class TestDictProxiedMethods(unittest.TestCase):
+
+class TestProxiedMethods(unittest.TestCase):
     """
         Here lives tests of dict methods that are simply proxied by scalpl.
     """
@@ -14,9 +16,10 @@ class TestDictProxiedMethods(unittest.TestCase):
         'Dogz': 'Waff',
         'Fishz': 'Blubz'
     }
+    Dict = dict
 
     def setUp(self):
-        self.data = Cut(deepcopy(self.BASE))
+        self.data = Cut(deepcopy(self.Dict(self.BASE)))
 
     def test_bool(self):
         assert bool(self.data) is True
@@ -105,7 +108,7 @@ class TestDictProxiedMethods(unittest.TestCase):
         self.assertListEqual(result, expected)
 
 
-class TestDictMethodsWithCustomLogic(unittest.TestCase):
+class TestCustomLogicMethods(unittest.TestCase):
     """
         Here lives tests of dict methods where scalpl adds its custom logic
         to handle operate on nested dictionnaries.
@@ -118,9 +121,10 @@ class TestDictMethodsWithCustomLogic(unittest.TestCase):
             }
         }
     }
+    Dict = dict
 
     def setUp(self):
-        self.data = Cut(deepcopy(self.BASE))
+        self.data = Cut(deepcopy(self.Dict(self.BASE)))
 
     def test_get(self):
         assert self.data.get('users') == {'john': {'age': 666, 'sex': None}}
@@ -232,6 +236,28 @@ class TestCutOwnAPI(unittest.TestCase):
         result = list(result)
         assert result[0].sep == '/'
         assert result[1].sep == '/'
+
+
+class TestOrderedDictPM(TestProxiedMethods):
+    Dict = OrderedDict
+
+
+class TestOrderedDictCLM(TestCustomLogicMethods):
+    Dict = OrderedDict
+
+
+class TestDefaultDictPM(TestProxiedMethods):
+    Dict = defaultdict
+
+    def setUp(self):
+        self.data = Cut(deepcopy(self.Dict(None, self.BASE)))
+
+
+class TestDefaultDictCLM(TestCustomLogicMethods):
+    Dict = defaultdict
+
+    def setUp(self):
+        self.data = Cut(deepcopy(self.Dict(None, self.BASE)))
 
 
 if __name__ == '__main__':
