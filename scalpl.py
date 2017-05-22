@@ -4,27 +4,23 @@
 from typing import Any, Iterator, List, Optional
 from itertools import chain
 
-# TODO:
-#  - Is it worth it to add a way to handle Lists ?
-#  - Is it interesting use Cut inside a context manager ?
 
-
-class Cut:
+class LightCut:
     """
-        Cut is a simple wrapper over the built-in dict class.
+        LightCut is a simple wrapper over the built-in dict class.
 
         It enables the standard dict API to operate on nested dictionnaries
-        by using colon-separated string keys.
+        by using dot-separated string keys.
 
         ex:
             query = {...} # Any dict structure
             proxy = Cut(query)
-            proxy['users:john:age']
-            proxy['users:john:age'] = 42
+            proxy['pokemons.charmander.level']
+            proxy['pokemons.charmander.level'] = 666
     """
     __slots__ = ('data', 'sep')
 
-    def __init__(self, data: Optional[dict]=None, sep: str=':') -> None:
+    def __init__(self, data: Optional[dict]=None, sep: str='.') -> None:
         self.data = data or {}
         self.sep = sep
 
@@ -34,18 +30,19 @@ class Cut:
     def __contains__(self, key: str) -> bool:
         keys = key.split(self.sep)
         try:
-            self.__traverse(keys)
+            self._traverse(keys, LightCut._get_next)
             return True
         except KeyError:
             return False
 
     def __delitem__(self, key: str) -> None:
-        keys = key.split(self.sep)
-        last_key = keys[-1]
-        parent_keys = keys[:-1]
+        *parent_keys, last_key = key.split(self.sep)
         try:
-            value = self.__traverse(parent_keys)
-            del value[last_key]
+            if parent_keys:
+                parent = self._traverse(parent_keys, LightCut._get_next)
+            else:
+                parent = self.data
+            del parent[last_key]
         except KeyError as err:
             raise KeyError('Key ' + key + ' not found.') from err
 
@@ -55,7 +52,7 @@ class Cut:
     def __getitem__(self, key: str) -> Any:
         keys = key.split(self.sep)
         try:
-            return self.__traverse(keys)
+            return self._traverse(keys, LightCut._get_next)
         except KeyError as err:
             raise KeyError('Key ' + key + ' not found.') from err
 
@@ -69,28 +66,32 @@ class Cut:
         return self.data != other
 
     def __setitem__(self, key: str, value: Any) -> None:
-        keys = key.split(self.sep)
-        last_key = keys[-1]
-        parent_keys = keys[:-1]
-        current_dict = self.data
-        for k in parent_keys:
-            current_dict = current_dict.setdefault(k, {})
-
-        current_dict[last_key] = value
+        *parent_keys, last_key = key.split(self.sep)
+        if parent_keys:
+            parent = self._traverse(parent_keys, LightCut._get_or_create_next)
+        else:
+            parent = self.data
+        parent[last_key] = value
 
     def __str__(self) -> str:
         return str(self.data)
 
-    def __traverse(self, keys: List[str]) -> Any:
+    def _get_next(_dict: dict, key: str) -> Any:
+        return _dict[key]
+
+    def _get_or_create_next(_dict: dict, key: str) -> Any:
+        return _dict.setdefault(key, {})
+
+    def _traverse(self, keys: List[str], getter) -> Any:
         current_dict = self.data
         for k in keys:
-            current_dict = current_dict[k]
+            current_dict = getter(current_dict, k)
         return current_dict
 
     @staticmethod
-    def all(dicts: Iterator[dict], sep: str=':') -> Iterator['Cut']:
+    def all(dicts: Iterator[dict], sep: str='.') -> Iterator['LightCut']:
         """Wrap each dictionary from an Iterable."""
-        return (Cut(_dict, sep) for _dict in dicts)
+        return (LightCut(_dict, sep) for _dict in dicts)
 
     def clear(self) -> None:
         return self.data.clear()
@@ -98,14 +99,14 @@ class Cut:
     def copy(self) -> dict:
         return self.data.copy()
 
-    @staticmethod
-    def fromkeys(seq: List[str], value: Any=None) -> 'Cut':
-        return Cut(dict.fromkeys(seq, value))
+    @classmethod
+    def fromkeys(cls, seq: List[str], value: Any=None) -> 'LightCut':
+        return cls(dict.fromkeys(seq, value))
 
     def get(self, key: str, default: Any=None) -> Any:
         keys = key.split(self.sep)
         try:
-            return self.__traverse(keys)
+            return self._traverse(keys, LightCut._get_next)
         except KeyError:
             return default
 
@@ -116,12 +117,13 @@ class Cut:
         return self.data.items()
 
     def pop(self, key: str, default: Any=None) -> Any:
-        keys = key.split(self.sep)
-        last_key = keys[-1]
-        parent_keys = keys[:-1]
+        *parent_keys, last_key = key.split(self.sep)
         try:
-            value = self.__traverse(parent_keys)
-            return value.pop(last_key)
+            if parent_keys:
+                parent = self._traverse(parent_keys, LightCut._get_next)
+            else:
+                parent = self.data
+            return parent.pop(last_key)
         except KeyError:
             return default
 
@@ -129,11 +131,15 @@ class Cut:
         return self.data.popitem()
 
     def setdefault(self, key: str, default: Any=None) -> Any:
-        keys = key.split(self.sep)
+        *parent_keys, last_key = key.split(self.sep)
         try:
-            return self.__traverse(keys)
+            if parent_keys:
+                parent = self._traverse(parent_keys, LightCut._get_next)
+            else:
+                parent = self.data
+            return parent[last_key]
         except KeyError:
-            self.__setitem__(key, default)
+            parent[last_key] = default
             return default
 
     def update(self, data=None, **kwargs) -> None:
@@ -149,3 +155,100 @@ class Cut:
 
     def values(self):
         return self.data.values()
+
+
+class Cut(LightCut):
+    """
+        Cut is a simple wrapper over the built-in dict class.
+
+        It enables the standard dict API to operate on nested dictionnaries
+        and cut accross list item by using dot-separated string keys.
+
+        ex:
+            query = {...} # Any dict structure
+            proxy = Cut(query)
+            proxy['pokemons[0].level']
+            proxy['pokemons[0].level'] = 666
+    """
+    __slots__ = ()
+
+    def __delitem__(self, key: str) -> None:
+        *parent_keys, last_key = key.split(self.sep)
+        try:
+            if parent_keys:
+                parent = self._traverse(parent_keys, Cut._get_next)
+            else:
+                parent = self.data
+
+            last_key, *str_index = last_key.split('[')
+            if str_index:
+                index = int(str_index[0][:-1])
+                del parent[last_key][index]
+            else:
+                del parent[last_key]
+
+        except KeyError as err:
+            raise KeyError('Key ' + key + ' not found.') from err
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        *parent_keys, last_key = key.split(self.sep)
+        if parent_keys:
+            parent = self._traverse(parent_keys, Cut._get_or_create_next)
+        else:
+            parent = self.data
+
+        last_key, *str_index = last_key.split('[')
+        if str_index:
+            index = int(str_index[0][:-1])
+            parent[last_key][index] = value
+        else:
+            parent[last_key] = value
+
+    def _traverse(self, keys: List[str], getter) -> Any:
+        step = self.data
+        for _key in keys:
+            _key, *str_index = _key.split('[')
+            step = getter(step, _key)
+            if str_index:
+                index = int(str_index[0][:-1])
+                step = step[index]
+        return step
+
+    def get(self, key: str, default: Any=None) -> Any:
+        try:
+            return super().get(key, default)
+        except IndexError:
+            return default
+
+    def pop(self, key: str, default: Any=None) -> Any:
+        *parent_keys, last_key = key.split(self.sep)
+        try:
+            if parent_keys:
+                parent = self._traverse(parent_keys, Cut._get_next)
+            else:
+                parent = self.data
+            last_key, *str_index = last_key.split('[')
+            if str_index:
+                index = int(str_index[0][:-1])
+                return parent[last_key].pop(index)
+            return parent.pop(last_key)
+        except KeyError:
+            return default
+
+    def setdefault(self, key: str, default: Any=None) -> Any:
+        *parent_keys, last_key = key.split(self.sep)
+        try:
+            if parent_keys:
+                parent = self._traverse(parent_keys, Cut._get_next)
+            else:
+                parent = self.data
+
+            last_key, *str_index = last_key.split('[')
+            if str_index:
+                index = int(str_index[0][:-1])
+                return parent[last_key][index]
+            else:
+                return parent[last_key]
+        except KeyError:
+            parent[last_key] = default
+            return default
