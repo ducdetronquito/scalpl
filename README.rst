@@ -1,16 +1,16 @@
-.. image:: https://github.com/ducdetronquito/scalpl/blob/master/scalpl.png
+.. image:: https://raw.githubusercontent.com/ducdetronquito/scalpl/master/scalpl.png
     :target: https://github.com/ducdetronquito/scalpl
 
 Scalpl
 ======
 
 .. image:: https://img.shields.io/badge/license-public%20domain-ff69b4.svg
-    :target: #
+    :target: https://github.com/ducdetronquito/scalpl#license
 
 .. image:: https://img.shields.io/badge/coverage-100%25-green.svg
     :target: #
 
-.. image:: https://img.shields.io/badge/pypi-v0.1-blue.svg
+.. image:: https://img.shields.io/badge/pypi-v0.2.3-blue.svg
     :target: https://pypi.python.org/pypi/scalpl/
 
 
@@ -33,9 +33,9 @@ such as `Addict <https://github.com/mewwts/addict>`_ or
 `Box <https://github.com/cdgriffith/Box>`_ , but if you give **Scalpl**
 a try, you will find it:
 
-* Fast ⚡
-* Powerful as the standard dict API 🚀
-* Well tested 👌
+* ⚡ Fast
+* 🚀 Powerful as the standard dict API
+* 👌 Well tested
 
 Installation
 ~~~~~~~~~~~~
