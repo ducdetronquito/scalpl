@@ -1,7 +1,7 @@
 """
     A lightweight wrapper to operate on nested dictionaries seamlessly.
 """
-from typing import Any, Iterator, List, Optional
+from typing import Any, Optional
 from itertools import chain
 
 
@@ -76,20 +76,20 @@ class LightCut:
     def __str__(self) -> str:
         return str(self.data)
 
-    def _get_next(_dict: dict, key: str) -> Any:
+    def _get_next(self, _dict, key):
         return _dict[key]
 
-    def _get_or_create_next(_dict: dict, key: str) -> Any:
+    def _get_or_create_next(self, _dict, key):
         return _dict.setdefault(key, {})
 
-    def _traverse(self, keys: List[str], getter) -> Any:
+    def _traverse(self, keys, getter):
         current_dict = self.data
         for k in keys:
-            current_dict = getter(current_dict, k)
+            current_dict = getter(self, current_dict, k)
         return current_dict
 
     @classmethod
-    def all(cls, dicts: Iterator[dict], sep: str='.') -> Iterator['LightCut']:
+    def all(cls, dicts, sep='.'):
         """Wrap each dictionary from an Iterable."""
         return (cls(_dict, sep) for _dict in dicts)
 
@@ -100,7 +100,7 @@ class LightCut:
         return self.data.copy()
 
     @classmethod
-    def fromkeys(cls, seq: List[str], value: Any=None) -> 'LightCut':
+    def fromkeys(cls, seq, value=None):
         return cls(dict.fromkeys(seq, value))
 
     def get(self, key: str, default: Any=None) -> Any:
@@ -142,7 +142,7 @@ class LightCut:
             parent[last_key] = default
             return default
 
-    def update(self, data=None, **kwargs) -> None:
+    def update(self, data=None, **kwargs):
         data = data or {}
         try:
             data.update(kwargs)
@@ -204,11 +204,11 @@ class Cut(LightCut):
         else:
             parent[last_key] = value
 
-    def _traverse(self, keys: List[str], getter) -> Any:
+    def _traverse(self, keys, getter):
         step = self.data
         for _key in keys:
             _key, *str_index = _key.split('[')
-            step = getter(step, _key)
+            step = getter(self, step, _key)
             if str_index:
                 index = int(str_index[0][:-1])
                 step = step[index]

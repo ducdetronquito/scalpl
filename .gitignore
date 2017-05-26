@@ -1,8 +1,19 @@
+# Python
 __pycache__/*
-.mypy_cache/*
+*.pyc
+
+# Packaging
 build/*
 dist/*
 scalpl.egg-info/*
-*.pyc
+
+
+# Mypy
+.mypy_cache/*
+
+# Coverage.py
 .coverage
 htmlcov/*
+
+# Tests
+reddit.json

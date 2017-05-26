@@ -1,5 +1,6 @@
 from collections import defaultdict, OrderedDict
 from copy import deepcopy
+import json
 from timeit import timeit
 from types import GeneratorType
 import unittest
@@ -449,10 +450,18 @@ class TestDictPerformance(unittest.TestCase):
         Base class to test performance of different
         dict wrapper regarding insertion and lookup.
     """
+    # We use the JSON dump of the Python Reddit page.
+    # We only collect it once.
+    try:
+        with open('reddit.json', 'r') as f:
+            PYTHON_REDDIT = json.loads(f.read())
+    except:
+        PYTHON_REDDIT = requests.get(
+            'https://reddit.com/r/Python/.json'
+        ).json()
 
-    PYTHON_REDDIT = requests.get(
-        'https://reddit.com/r/Python/.json'
-    ).json()
+        with open('reddit.json', 'w') as f:
+            f.write(json.dumps(PYTHON_REDDIT))
 
     namespace = {
         'Wrapper': dict
@@ -525,28 +534,28 @@ class TestBoxPerformance(TestDictPerformance):
     }
 
     def test_getitem(self):
-        self.execute("Wrapper(self.data).data.modhash", 'get')
-        self.execute("Wrapper(self.data).data.modhash", 'get - REAL')
+        self.execute("Wrapper(self.data).data.modhash", 'get - 1st lookup')
+        self.execute("Wrapper(self.data).data.modhash", 'get - 2nd lookup')
 
     def test_getitem_through_list(self):
         statement = (
             "Wrapper(self.data).data.children[0].data.author"
         )
-        self.execute(statement, 'get through list')
-        self.execute(statement, 'get through list - REAL')
+        self.execute(statement, 'get through list - 1st lookup')
+        self.execute(statement, 'get through list - 2nd lookup')
 
     def test_setitem(self):
         statement = "Wrapper(self.data).data.modhash = 'dunno'"
-        self.execute(statement, 'set')
-        self.execute(statement, 'set - REAL')
+        self.execute(statement, 'set - 1st lookup')
+        self.execute(statement, 'set - 2nd lookup')
 
     def test_setitem_through_list(self):
         statement = (
             "Wrapper(self.data).data.children[0]"
             ".data.author = 'Captain Obvious'"
         )
-        self.execute(statement, 'set through list')
-        self.execute(statement, 'set through list - REAL')
+        self.execute(statement, 'set through list - 1st lookup')
+        self.execute(statement, 'set through list - 2nd lookup')
 
 
 class TestAddictPerformance(TestDictPerformance):
