@@ -1,10 +1,15 @@
-from scalpl import Cut, LightCut
-
+from collections import defaultdict, OrderedDict
 from copy import deepcopy
+from timeit import timeit
 from types import GeneratorType
 import unittest
 
-from collections import defaultdict, OrderedDict
+from scalpl import Cut, LightCut
+
+from addict import Dict
+from box import Box
+import requests
+
 
 ASH = {
     'name': 'Ash',
@@ -141,6 +146,7 @@ class TestLightCutProxiedMethods(unittest.TestCase):
         expected = list(OrderedDict(deepcopy(BASE)).values())
         assert result == expected
 
+
 class TestLightCutCustomLogicMethods(unittest.TestCase):
     """
         Here lives tests of dict methods where scalpl adds its custom logic
@@ -160,7 +166,7 @@ class TestLightCutCustomLogicMethods(unittest.TestCase):
         del self.data['trainer.name']
         assert 'name' not in self.data['trainer']
         assert 'trainer' in self.data
-    
+
     def test_delitem_undefined_key(self):
         with self.assertRaises(KeyError):
             del self.data['trainer.bicycle']
@@ -224,10 +230,10 @@ class TestLightCutCustomLogicMethods(unittest.TestCase):
     def test_pop_nested_key(self):
         assert self.data.pop('trainer.badges.Cascade') is False
         assert 'trainer.badges.Cascade' not in self.data
-    
+
     def test_pop_undefined_key(self):
         assert self.data.pop('trainer.bicycle', 'Not Found') == 'Not Found'
-    
+
     def test_set(self):
         self.data['trainer.badges.Boulder'] = False
         assert self.data['trainer']['badges']['Boulder'] is False
@@ -436,6 +442,118 @@ class TestCutWithDefaultDictCLM(TestCutWithDictCLM):
 
     def setUp(self):
         self.data = self.Wrapper(deepcopy(self.Dict(None, BASE)))
+
+
+class TestDictPerformance(unittest.TestCase):
+    """
+        Base class to test performance of different
+        dict wrapper regarding insertion and lookup.
+    """
+
+    PYTHON_REDDIT = requests.get(
+        'https://reddit.com/r/Python/.json'
+    ).json()
+
+    namespace = {
+        'Wrapper': dict
+    }
+
+    def setUp(self):
+        self.data = deepcopy(self.PYTHON_REDDIT)
+        self.namespace.update(self=self)
+
+    def execute(self, statement, method):
+        n = 1000
+        time = timeit(statement, globals=self.namespace, number=n)
+        print('# ', self.namespace['Wrapper'], ' - ', method, ': ', time/n)
+
+    def test_init(self):
+        self.execute('Wrapper(self.data)', 'instanciate')
+
+    def test_getitem(self):
+        self.execute("Wrapper(self.data)['data']['modhash']", 'get')
+
+    def test_getitem_through_list(self):
+        statement = (
+            "Wrapper(self.data)['data']['children'][0]['data']['author']"
+        )
+        self.execute(statement, 'get through list')
+
+    def test_setitem(self):
+        statement = "Wrapper(self.data)['data']['modhash'] = 'dunno'"
+        self.execute(statement, 'set')
+
+    def test_setitem_through_list(self):
+        statement = (
+            "Wrapper(self.data)['data']['children'][0]"
+            "['data']['author'] = 'Captain Obvious'"
+        )
+        self.execute(statement, 'set through list')
+
+
+class TestCutPerformance(TestDictPerformance):
+
+    namespace = {
+        'Wrapper': Cut
+    }
+
+    def test_getitem(self):
+        self.execute("Wrapper(self.data)['data.modhash']", 'get')
+
+    def test_getitem_through_list(self):
+        statement = (
+            "Wrapper(self.data)['data.children[0].data.author']"
+        )
+        self.execute(statement, 'get through list')
+
+    def test_setitem(self):
+        statement = "Wrapper(self.data)['data.modhash'] = 'dunno'"
+        self.execute(statement, 'set')
+
+    def test_setitem_through_list(self):
+        statement = (
+            "Wrapper(self.data)['data.children[0]"
+            ".data.author'] = 'Captain Obvious'"
+        )
+        self.execute(statement, 'set through list')
+
+
+class TestBoxPerformance(TestDictPerformance):
+
+    namespace = {
+        'Wrapper': Box
+    }
+
+    def test_getitem(self):
+        self.execute("Wrapper(self.data).data.modhash", 'get')
+        self.execute("Wrapper(self.data).data.modhash", 'get - REAL')
+
+    def test_getitem_through_list(self):
+        statement = (
+            "Wrapper(self.data).data.children[0].data.author"
+        )
+        self.execute(statement, 'get through list')
+        self.execute(statement, 'get through list - REAL')
+
+    def test_setitem(self):
+        statement = "Wrapper(self.data).data.modhash = 'dunno'"
+        self.execute(statement, 'set')
+        self.execute(statement, 'set - REAL')
+
+    def test_setitem_through_list(self):
+        statement = (
+            "Wrapper(self.data).data.children[0]"
+            ".data.author = 'Captain Obvious'"
+        )
+        self.execute(statement, 'set through list')
+        self.execute(statement, 'set through list - REAL')
+
+
+class TestAddictPerformance(TestDictPerformance):
+
+    namespace = {
+        'Wrapper': Dict
+    }
 
 
 if __name__ == '__main__':

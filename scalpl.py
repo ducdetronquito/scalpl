@@ -88,10 +88,10 @@ class LightCut:
             current_dict = getter(current_dict, k)
         return current_dict
 
-    @staticmethod
-    def all(dicts: Iterator[dict], sep: str='.') -> Iterator['LightCut']:
+    @classmethod
+    def all(cls, dicts: Iterator[dict], sep: str='.') -> Iterator['LightCut']:
         """Wrap each dictionary from an Iterable."""
-        return (LightCut(_dict, sep) for _dict in dicts)
+        return (cls(_dict, sep) for _dict in dicts)
 
     def clear(self) -> None:
         return self.data.clear()
