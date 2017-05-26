@@ -4,7 +4,7 @@ setup(
     name='scalpl',
     py_modules=['scalpl'],
     version='0.1',
-    description='A minimalist tool to operate on nested dictionaries.',
+    description='A lightweight wrapper to operate on nested dictionaries seamlessly.',
     author='Guillaume Paulet',
     author_email='guillaume.paulet@giome.fr',
     license='Public Domain',

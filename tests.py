@@ -114,6 +114,11 @@ class TestLightCutProxiedMethods(unittest.TestCase):
         ]
         self.assertListEqual(result, expected)
 
+    def test_iter(self):
+        keys = sorted([key for key in self.data])
+        assert keys[0] == 'pokemons'
+        assert keys[1] == 'trainer'
+
     def test_keys(self):
         result = sorted(self.data.keys())
         expected = ['pokemons', 'trainer']
@@ -126,15 +131,15 @@ class TestLightCutProxiedMethods(unittest.TestCase):
         self.data.popitem()
         assert len(self.data) == 1
 
+    def test_str(self):
+        result = str(self.Wrapper(OrderedDict(deepcopy(BASE))))
+        expected = str(OrderedDict(deepcopy(BASE)))
+        assert result == expected
+
     def test_values(self):
-        result = list(self.data.values())
-
-        if (result[0] == [BULBASAUR, CHARMANDER, SQUIRTLE]):
-            assert result[1] == ASH
-        else:
-            assert result[0] == ASH
-            assert result[1] == [BULBASAUR, CHARMANDER, SQUIRTLE]
-
+        result = list(self.Wrapper(OrderedDict(deepcopy(BASE))).values())
+        expected = list(OrderedDict(deepcopy(BASE)).values())
+        assert result == expected
 
 class TestLightCutCustomLogicMethods(unittest.TestCase):
     """
@@ -147,11 +152,18 @@ class TestLightCutCustomLogicMethods(unittest.TestCase):
     def setUp(self):
         self.data = self.Wrapper(deepcopy(self.Dict(BASE)))
 
-    def test_delete_key(self):
+    def test_delitem(self):
+        del self.data['trainer']
+        assert 'trainer' not in self.data
+
+    def test_delitem_nested_key(self):
         del self.data['trainer.name']
         assert 'name' not in self.data['trainer']
-
-        assert 'name.trainer' not in self.data
+        assert 'trainer' in self.data
+    
+    def test_delitem_undefined_key(self):
+        with self.assertRaises(KeyError):
+            del self.data['trainer.bicycle']
 
     def test_get(self):
         assert self.data.get('trainer') == ASH
@@ -206,14 +218,24 @@ class TestLightCutCustomLogicMethods(unittest.TestCase):
         assert 'trainer.badges.Thunder' not in self.data
 
     def test_pop(self):
+        assert self.data.pop('trainer') == ASH
+        assert 'trainer' not in self.data
+
+    def test_pop_nested_key(self):
         assert self.data.pop('trainer.badges.Cascade') is False
         assert 'trainer.badges.Cascade' not in self.data
-
+    
+    def test_pop_undefined_key(self):
+        assert self.data.pop('trainer.bicycle', 'Not Found') == 'Not Found'
+    
     def test_set(self):
         self.data['trainer.badges.Boulder'] = False
         assert self.data['trainer']['badges']['Boulder'] is False
 
     def test_setdefault(self):
+        assert self.data.setdefault('trainer', 'Not Found') == ASH
+
+    def test_setdefault_nested_key(self):
         result = self.data.setdefault('trainer.badges.Boulder', 'Undefined')
         assert result is True
 

@@ -2,6 +2,11 @@
     <img src="scalpl.png">
     <h1 align="center">Scalpl</h1>
 </p>
+<p align="center">
+    <a href="#"><img src="https://img.shields.io/badge/license-public%20domain-ff69b4.svg"></a>
+    <a href="#"><img src="https://img.shields.io/badge/coverage-100%25-green.svg"></a>
+    <a href="#"><img src="https://img.shields.io/badge/pypi-v0.1-blue.svg"></a>
+</p>
 
 **Scalpl** provides a **lightweight wrapper** that helps you to operate on
 **nested dictionaries** seamlessly **through the built-in** `dict` **API**, 

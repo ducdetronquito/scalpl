@@ -4,3 +4,5 @@ build/*
 dist/*
 scalpl.egg-info/*
 *.pyc
+.coverage
+htmlcov/*
