@@ -6,7 +6,7 @@ with open('README.rst', 'r') as f:
 setup(
     name='scalpl',
     py_modules=['scalpl'],
-    version='0.2.3',
+    version='0.2.4',
     description=(
         'A lightweight wrapper to operate on nested '
         'dictionaries seamlessly.'
@@ -18,7 +18,7 @@ setup(
     url='https://github.com/ducdetronquito/scalpl',
     download_url=(
         'https://github.com/ducdetronquito/scalpl/archive/'
-        '0.2.0.tar.gz'
+        '0.2.4.tar.gz'
     ),
     tests_require=['addict', 'mypy', 'python-box', 'requests'],
     keywords=[
