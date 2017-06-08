@@ -16,13 +16,13 @@ Scalpl
 Outline
 ~~~~~~~
 
-1. `Overview <https://github.com/ducdetronquito/scalpl/tree/wip-traversable-nested-lists#overview>`_
-2. `Benefits <https://github.com/ducdetronquito/scalpl/tree/wip-traversable-nested-lists#benefits>`_
-3. `Installation <https://github.com/ducdetronquito/scalpl/tree/wip-traversable-nested-lists#installation>`_
-4. `Usage <https://github.com/ducdetronquito/scalpl/tree/wip-traversable-nested-lists#usage>`_
-5. `Benchmark <https://github.com/ducdetronquito/scalpl/tree/wip-traversable-nested-lists#benchmark>`_
-6. `Frequently Asked Questions <https://github.com/ducdetronquito/scalpl/tree/wip-traversable-nested-lists#frequently-asked-questions>`_
-7. `License <https://github.com/ducdetronquito/scalpl/tree/wip-traversable-nested-lists#license>`_
+1. `Overview <https://github.com/ducdetronquito/scalpl#overview>`_
+2. `Benefits <https://github.com/ducdetronquito/scalpl#benefits>`_
+3. `Installation <https://github.com/ducdetronquito/scalpl#installation>`_
+4. `Usage <https://github.com/ducdetronquito/scalpl#usage>`_
+5. `Benchmark <https://github.com/ducdetronquito/scalpl#benchmark>`_
+6. `Frequently Asked Questions <https://github.com/ducdetronquito/scalpl#frequently-asked-questions>`_
+7. `License <https://github.com/ducdetronquito/scalpl#license>`_
 
 
 Overview
