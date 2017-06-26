@@ -10,7 +10,7 @@ Scalpl
 .. image:: https://img.shields.io/badge/coverage-100%25-green.svg
     :target: #
 
-.. image:: https://img.shields.io/badge/pypi-v0.2.4-blue.svg
+.. image:: https://img.shields.io/badge/pypi-v0.2.5-blue.svg
     :target: https://pypi.python.org/pypi/scalpl/
 
 Outline
@@ -175,9 +175,8 @@ By the way, if you have to operate on a list of dictionaries, the
 
 .. code:: python
 
-    pokemons = proxy['pokemons']
     # Let's teach these pokemons some sick moves !
-    for pokemon in Cut.all(pokemons):
+    for pokemon in proxy.all('pokemons'):
         pokemon.setdefault('moves.Scratch.power', 40)
 
 Also, you can remove a specific or an arbitrary key/value pair.
