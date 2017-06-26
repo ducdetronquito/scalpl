@@ -77,17 +77,18 @@ class LightCut:
     def __str__(self) -> str:
         return str(self.data)
 
-    def _traverse(self, parent, key):
+    def _traverse(self, parent, key: str):
         *parent_keys, last_key = key.split(self.sep)
         if parent_keys:
             for key in parent_keys:
                 parent = parent[key]
         return parent, last_key
 
-    @classmethod
-    def all(cls, dicts, sep='.'):
-        """Wrap each dictionary from an Iterable."""
-        return (cls(_dict, sep) for _dict in dicts)
+    def all(self, key: str):
+        """Wrap each item of an Iterable."""
+        items = self[key]
+        cls = self.__class__
+        return (cls(_dict, self.sep) for _dict in items)
 
     def clear(self) -> None:
         return self.data.clear()

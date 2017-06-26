@@ -286,8 +286,7 @@ class TestLightCutCustomLogicMethods(unittest.TestCase):
         assert self.data['game'] == 'Pokemon Blue'
 
     def test_all_returns_generator(self):
-        pokemons = self.data['pokemons']
-        result = self.Wrapper.all(pokemons)
+        result = self.data.all('pokemons')
         assert isinstance(result, GeneratorType) is True
         result = list(result)
         assert result[0].data == BULBASAUR
@@ -295,8 +294,8 @@ class TestLightCutCustomLogicMethods(unittest.TestCase):
         assert result[2].data == SQUIRTLE
 
     def test_all_with_custom_separator(self):
-        pokemons = self.data['pokemons']
-        result = self.Wrapper.all(pokemons, sep='/')
+        self.data.sep = '/'
+        result = self.data.all('pokemons')
         result = list(result)
         assert result[0].sep == '/'
         assert result[1].sep == '/'
