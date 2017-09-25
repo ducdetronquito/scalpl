@@ -264,7 +264,7 @@ As a conclusion and despite being ~10 times slower than the built-in
 operations, and ~100 times faster when it traverse lists. **Scalpl** is
 also ~1000 times faster than Addict.
 
-Às a human, I make a lot of mistakes. If you find some in this humble benchmark,
+As a human, I make a lot of mistakes. If you find some in this humble benchmark,
 do not hesitate to send me an email, or fill in an issue.
 
 
