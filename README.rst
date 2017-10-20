@@ -13,6 +13,10 @@ Scalpl
 .. image:: https://img.shields.io/badge/pypi-v0.2.5-blue.svg
     :target: https://pypi.python.org/pypi/scalpl/
 
+.. image:: https://travis-ci.org/ducdetronquito/scalpl.svg?branch=master
+     :target: https://travis-ci.org/ducdetronquito/scalpl
+
+
 Outline
 ~~~~~~~
 

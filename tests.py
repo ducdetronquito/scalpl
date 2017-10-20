@@ -4,8 +4,6 @@ from types import GeneratorType
 
 from scalpl import Cut, LightCut
 
-import unittest
-
 
 ASH = {
     'name': 'Ash',
@@ -55,14 +53,14 @@ BASE = {
 }
 
 
-class TestLightCutProxiedMethods(unittest.TestCase):
+class TestLightCutProxiedMethods:
     """
         Here lives tests of dict methods that are simply proxied by scalpl.
     """
     Dict = dict
     Wrapper = LightCut
 
-    def setUp(self):
+    def setup(self):
         self.data = self.Wrapper(deepcopy(self.Dict(BASE)))
 
     def test_bool(self):
@@ -121,7 +119,7 @@ class TestLightCutProxiedMethods(unittest.TestCase):
             ('team_sets', [FIRST_SET, SECOND_SET]),
             ('trainer', ASH),
         ]
-        self.assertListEqual(result, expected)
+        assert result == expected
 
     def test_iter(self):
         keys = sorted([key for key in self.data])
@@ -132,7 +130,7 @@ class TestLightCutProxiedMethods(unittest.TestCase):
     def test_keys(self):
         result = sorted(self.data.keys())
         expected = ['pokemons', 'team_sets', 'trainer']
-        self.assertListEqual(result, expected)
+        assert result == expected
 
     def test_len(self):
         assert len(self.data) == 3
@@ -152,7 +150,7 @@ class TestLightCutProxiedMethods(unittest.TestCase):
         assert result == expected
 
 
-class TestLightCutCustomLogicMethods(unittest.TestCase):
+class TestLightCutCustomLogicMethods:
     """
         Here lives tests of dict methods where scalpl adds its custom logic
         to handle operate on nested dictionnaries.
@@ -160,7 +158,7 @@ class TestLightCutCustomLogicMethods(unittest.TestCase):
     Dict = dict
     Wrapper = LightCut
 
-    def setUp(self):
+    def setup(self):
         self.data = self.Wrapper(deepcopy(self.Dict(BASE)))
 
     def test_delitem(self):
@@ -316,7 +314,7 @@ class TestLightCutWithDefaultDictPM(TestLightCutProxiedMethods):
     Dict = defaultdict
     Wrapper = LightCut
 
-    def setUp(self):
+    def setup(self):
         self.data = self.Wrapper(deepcopy(self.Dict(None, BASE)))
 
 
@@ -324,7 +322,7 @@ class TestLightCutWithDefaultDictCLM(TestLightCutCustomLogicMethods):
     Dict = defaultdict
     Wrapper = LightCut
 
-    def setUp(self):
+    def setup(self):
         self.data = self.Wrapper(deepcopy(self.Dict(None, BASE)))
 
 
@@ -588,7 +586,7 @@ class TestCutWithDefaultDictPM(TestCutWithDictPM):
     Dict = defaultdict
     Wrapper = Cut
 
-    def setUp(self):
+    def setup(self):
         self.data = self.Wrapper(deepcopy(self.Dict(None, BASE)))
 
 
@@ -596,9 +594,5 @@ class TestCutWithDefaultDictCLM(TestCutWithDictCLM):
     Dict = defaultdict
     Wrapper = Cut
 
-    def setUp(self):
+    def setup(self):
         self.data = self.Wrapper(deepcopy(self.Dict(None, BASE)))
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -20,7 +20,10 @@ setup(
         'https://github.com/ducdetronquito/scalpl/archive/'
         '0.2.5.tar.gz'
     ),
-    tests_require=['addict', 'mypy', 'python-box', 'requests'],
+    tests_require=[
+        'addict', 'mypy', 'pytest', 'pytest-cov',
+        'python-box', 'requests',
+    ],
     keywords=[
         'dict', 'nested', 'proxy', 'traversable',
         'dictionary', 'box', 'addict', 'munch',
