@@ -290,7 +290,7 @@ Frequently Asked Questions:
 * **What if my keys contain spaces ?**::
     
     proxy = Cut(data)
-    proxy = ['it works. perfectly fine']
+    proxy['it works perfectly'] = 'fine'
 
 
 License
