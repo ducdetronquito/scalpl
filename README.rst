@@ -47,6 +47,7 @@ nutshell.
 
 Benefits
 ~~~~~~~~
+
 There are a lot of good libraries to operate on nested dictionaries,
 such as `Addict <https://github.com/mewwts/addict>`_ or 
 `Box <https://github.com/cdgriffith/Box>`_ , but if you give **Scalpl**
@@ -55,6 +56,7 @@ a try, you will find it:
 * ⚡ Fast
 * 🚀 Powerful as the standard dict API
 * 👌 Well tested
+
 
 Installation
 ~~~~~~~~~~~~
@@ -215,61 +217,61 @@ remove all keys.
 Benchmark
 ~~~~~~~~~
 
-This humble benchmark is an attempt to give you an overview of the performances
+This humble benchmark is an attempt to give you an overview of the performance
 of `Scalpl <https://github.com/ducdetronquito/scalpl>`_ compared to `Addict <https://github.com/mewwts/addict>`_,
-`Box <https://github.com/cdgriffith/Box>`_ and the built-in ``dict`` on **Python 3.5.3**.
+`Box <https://github.com/cdgriffith/Box>`_ and the built-in ``dict``.
 
 It will summarize the *number of operations per second* that each library is 
 able to perform on the JSON dump of the `Python subreddit main page <https://www.reddit.com/r/Python.json>`_.
 
-You can run this tests on your machine to see if the proportion are preserved::
+You can run this benchmark on your machine with the following command:
 
     python3.5 ./performance_tests.py
 
-Here are some results
+Here are the results obtained on an Intel Core i5-7500U CPU (2.50GHz) with **Python 3.6.4**.
 
 **Addict**::
 
-    instanciate:-------- 25,430  ops per second.
-    get:---------------- 25,253  ops per second.
-    get through list:--- 24,591  ops per second.
-    set:---------------- 25,422  ops per second.
+    instanciate:-------- 18,485  ops per second.
+    get:---------------- 18,806  ops per second.
+    get through list:--- 18,599  ops per second.
+    set:---------------- 18,797  ops per second.
+    set through list:--- 18,129  ops per second.
 
 
 **Box**::
 
-    instanciate:--------- 10,037,632  ops per second.
-    get:-----------------  2,623,730  ops per second.
-    get through list:----    197,536  ops per second.
-    set:-----------------  2,428,157  ops per second.
-    set through list:----    201,214  ops per second.
+    instanciate:--------- 4,150,396  ops per second.
+    get:----------------- 1,424,529  ops per second.
+    get through list:----   110,926  ops per second.
+    set:----------------- 1,332,435  ops per second.
+    set through list:----   110,833  ops per second.
 
 
 **Scalpl**::
 
-    instanciate:-------- 182,837,640  ops per second.
-    get:----------------  27,471,923  ops per second.
-    get through list:---  15,867,600  ops per second.
-    set:----------------  27,686,668  ops per second.
-    set through list:---  15,670,857  ops per second.
+    instanciate:-------- 136,517,371  ops per second.
+    get:----------------  24,918,648  ops per second.
+    get through list:---  12,624,630  ops per second.
+    set:----------------  26,409,542  ops per second.
+    set through list:---  13,765,265  ops per second.
 
 
 **dict**::
 
-    instanciate:--------- 231,210,310  ops per second.
-    get:----------------- 202,719,825  ops per second.
-    get through list:---- 178,902,610  ops per second.
-    set:----------------- 200,070,024  ops per second.
-    set through list :--- 174,726,407  ops per second.
+    instanciate:---------  92,119,547  ops per second.
+    get:----------------- 186,290,996  ops per second.
+    get through list:---- 178,747,154  ops per second.
+    set:----------------- 159,224,669  ops per second.
+    set through list :---  79,294,520  ops per second.
 
 
 As a conclusion and despite being ~10 times slower than the built-in
-``dict``, **Scalpl** is ~10 times faster than Box on simple read/write
+``dict``, **Scalpl** is ~20 times faster than Box on simple read/write
 operations, and ~100 times faster when it traverse lists. **Scalpl** is
-also ~1000 times faster than Addict.
+also ~1300 times faster than Addict.
 
-As a human, I make a lot of mistakes. If you find some in this humble benchmark,
-do not hesitate to send me an email, or fill in an issue.
+However, do not trust benchmarks and test it on a real use-case.
 
 
 Frequently Asked Questions:
