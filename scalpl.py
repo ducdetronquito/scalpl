@@ -18,9 +18,10 @@ class LightCut:
             proxy['pokemons.charmander.level']
             proxy['pokemons.charmander.level'] = 666
     """
-    __slots__ = ('data', 'sep')
 
-    def __init__(self, data: Optional[dict]=None, sep: str='.') -> None:
+    __slots__ = ("data", "sep")
+
+    def __init__(self, data: Optional[dict] = None, sep: str = ".") -> None:
         self.data = data or {}
         self.sep = sep
 
@@ -100,7 +101,7 @@ class LightCut:
     def fromkeys(cls, seq, value=None):
         return cls(dict.fromkeys(seq, value))
 
-    def get(self, key: str, default: Any=None) -> Any:
+    def get(self, key: str, default: Any = None) -> Any:
         try:
             return self[key]
         except (KeyError, IndexError):
@@ -112,7 +113,7 @@ class LightCut:
     def items(self):
         return self.data.items()
 
-    def pop(self, key: str, default: Any=None) -> Any:
+    def pop(self, key: str, default: Any = None) -> Any:
         try:
             parent, last_key = self._traverse(self.data, key)
             return parent.pop(last_key)
@@ -122,7 +123,7 @@ class LightCut:
     def popitem(self) -> Any:
         return self.data.popitem()
 
-    def setdefault(self, key: str, default: Any=None) -> Any:
+    def setdefault(self, key: str, default: Any = None) -> Any:
         parent = self.data
         *parent_keys, last_key = key.split(self.sep)
         if parent_keys:
@@ -157,9 +158,10 @@ class Cut(LightCut):
             proxy['pokemons[0].level']
             proxy['pokemons[0].level'] = 666
     """
+
     __slots__ = ()
 
-    def setdefault(self, key: str, default: Any=None) -> Any:
+    def setdefault(self, key: str, default: Any = None) -> Any:
         try:
             parent = self.data
             *parent_keys, last_key = key.split(self.sep)
@@ -181,7 +183,7 @@ class Cut(LightCut):
             raise IndexError('index out of range in key "' + key + '".')
 
     def _traverse_list(self, parent, key):
-        key, *str_indexes = key.split('[')
+        key, *str_indexes = key.split("[")
         if str_indexes:
             parent = parent[key]
             for str_index in str_indexes[:-1]:

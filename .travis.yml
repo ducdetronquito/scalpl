@@ -1,13 +1,13 @@
 language: python
 
 python:
-    - "3.5"
     - "3.6"
 
 install:
     - pip3 install -e .
     - pip3 install pytest
+    - pip3 install black
 
 script:
-    py.test tests.py
-
+    - pytest tests.py
+    - black --check scalpl.py tests.py setup.py
