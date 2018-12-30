@@ -26,7 +26,8 @@ Outline
 4. `Usage <https://github.com/ducdetronquito/scalpl#usage>`_
 5. `Benchmark <https://github.com/ducdetronquito/scalpl#benchmark>`_
 6. `Frequently Asked Questions <https://github.com/ducdetronquito/scalpl#frequently-asked-questions>`_
-7. `License <https://github.com/ducdetronquito/scalpl#license>`_
+7. `How to Contribute <https://github.com/ducdetronquito/scalpl#how-to-contribute>`_
+8. `License <https://github.com/ducdetronquito/scalpl#license>`_
 
 
 Overview
@@ -226,7 +227,7 @@ able to perform on the JSON dump of the `Python subreddit main page <https://www
 
 You can run this benchmark on your machine with the following command:
 
-    python3.5 ./performance_tests.py
+    python3 ./performance_tests.py
 
 Here are the results obtained on an Intel Core i5-7500U CPU (2.50GHz) with **Python 3.6.4**.
 
@@ -293,6 +294,11 @@ Frequently Asked Questions:
     
     proxy = Cut(data)
     proxy['it works perfectly'] = 'fine'
+
+How to Contribute
+~~~~~~~~~~~~~~~~~
+
+Contributions are welcomed and anyone can feel free to submit a patch, report a bug or ask for a feature. Please open an issue first in order to encourage and keep tracks of potential discussions ✍️
 
 
 License
