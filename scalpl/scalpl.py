@@ -116,7 +116,7 @@ class LightCut:
     ) -> TLightCut:
         return cls(dict.fromkeys(seq, value))
 
-    def get(self, key: str, default: Optional = None) -> Any:
+    def get(self, key: str, default: Optional[Any] = None) -> Any:
         try:
             return self[key]
         except (KeyError, IndexError):
@@ -176,7 +176,7 @@ class Cut(LightCut):
 
     __slots__ = ()
 
-    def setdefault(self, key: str, default: Optional = None) -> Any:
+    def setdefault(self, key: str, default: Optional[Any] = None) -> Any:
         try:
             parent = self.data
             *parent_keys, last_key = key.split(self.sep)
