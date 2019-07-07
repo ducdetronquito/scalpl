@@ -1,4 +1,4 @@
-.. image:: https://raw.githubusercontent.com/ducdetronquito/scalpl/master/scalpl.png
+.. image:: https://raw.githubusercontent.com/ducdetronquito/scalpl/master/assets/scalpl.png
     :target: https://github.com/ducdetronquito/scalpl
 
 Scalpl
