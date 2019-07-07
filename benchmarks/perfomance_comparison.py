@@ -18,16 +18,8 @@ class TestDictPerformance(unittest.TestCase):
 
     # We use the JSON dump of the Python Reddit page.
     # We only collect it once.
-    try:
-        with open('reddit.json', 'r') as f:
-            PYTHON_REDDIT = json.loads(f.read())
-    except:
-        PYTHON_REDDIT = requests.get(
-            'https://reddit.com/r/Python/.json'
-        ).json()
-
-        with open('reddit.json', 'w') as f:
-            f.write(json.dumps(PYTHON_REDDIT))
+    with open('benchmarks/reddit.json', 'r') as f:
+        PYTHON_REDDIT = json.loads(f.read())
 
     namespace = {
         'Wrapper': dict

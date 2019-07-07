@@ -227,7 +227,7 @@ able to perform on the JSON dump of the `Python subreddit main page <https://www
 
 You can run this benchmark on your machine with the following command:
 
-    python3 ./performance_tests.py
+    python3 ./benchmarks/performance_comparison.py
 
 Here are the results obtained on an Intel Core i5-7500U CPU (2.50GHz) with **Python 3.6.4**.
 
