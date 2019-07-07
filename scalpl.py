@@ -1,8 +1,21 @@
 """
     A lightweight wrapper to operate on nested dictionaries seamlessly.
 """
-from typing import Any, Optional
 from itertools import chain
+from typing import (
+    Any,
+    ItemsView,
+    Iterable,
+    Iterator,
+    KeysView,
+    Optional,
+    Type,
+    TypeVar,
+    ValuesView,
+)
+
+
+TLightCut = TypeVar("TLightCut", bound="LightCut")
 
 
 class LightCut:
@@ -57,7 +70,7 @@ class LightCut:
         except IndexError:
             raise IndexError('index out of range in key "' + key + '".')
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         return iter(self.data)
 
     def __len__(self) -> int:
@@ -85,7 +98,7 @@ class LightCut:
                 parent = parent[key]
         return parent, last_key
 
-    def all(self, key: str):
+    def all(self: TLightCut, key: str) -> Iterator[TLightCut]:
         """Wrap each item of an Iterable."""
         items = self[key]
         cls = self.__class__
@@ -98,19 +111,21 @@ class LightCut:
         return self.data.copy()
 
     @classmethod
-    def fromkeys(cls, seq, value=None):
+    def fromkeys(
+        cls: Type[TLightCut], seq: Iterable, value: Optional[Iterable] = None
+    ) -> TLightCut:
         return cls(dict.fromkeys(seq, value))
 
-    def get(self, key: str, default: Any = None) -> Any:
+    def get(self, key: str, default: Optional = None) -> Any:
         try:
             return self[key]
         except (KeyError, IndexError):
             return default
 
-    def keys(self):
+    def keys(self) -> KeysView:
         return self.data.keys()
 
-    def items(self):
+    def items(self) -> ItemsView:
         return self.data.items()
 
     def pop(self, key: str, default: Any = None) -> Any:
@@ -141,7 +156,7 @@ class LightCut:
         for key, value in pairs:
             self.__setitem__(key, value)
 
-    def values(self):
+    def values(self) -> ValuesView:
         return self.data.values()
 
 
@@ -161,7 +176,7 @@ class Cut(LightCut):
 
     __slots__ = ()
 
-    def setdefault(self, key: str, default: Any = None) -> Any:
+    def setdefault(self, key: str, default: Optional = None) -> Any:
         try:
             parent = self.data
             *parent_keys, last_key = key.split(self.sep)
@@ -171,7 +186,7 @@ class Cut(LightCut):
                     try:
                         parent = parent[_key]
                     except KeyError:
-                        child = {}
+                        child: dict = {}
                         parent[_key] = child
                         parent = child
             parent, last_key = self._traverse_list(parent, last_key)
