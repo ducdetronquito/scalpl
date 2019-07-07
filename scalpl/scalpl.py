@@ -54,9 +54,9 @@ class LightCut:
             parent, last_key = self._traverse(self.data, key)
             del parent[last_key]
         except KeyError:
-            raise KeyError('key "' + key + '" not found.')
+            raise KeyError(f'Key "{key}" not found.')
         except IndexError:
-            raise IndexError('index out of range in key "' + key + '".')
+            raise IndexError(f'Index out of range in key "{key}".')
 
     def __eq__(self, other: Any) -> bool:
         return self.data == other
@@ -66,9 +66,9 @@ class LightCut:
             parent, last_key = self._traverse(self.data, key)
             return parent[last_key]
         except KeyError:
-            raise KeyError('key "' + key + '" not found.')
+            raise KeyError(f'Key "{key}" not found.')
         except IndexError:
-            raise IndexError('index out of range in key "' + key + '".')
+            raise IndexError(f'Index out of range in key "{key}".')
 
     def __iter__(self) -> Iterator:
         return iter(self.data)
@@ -84,9 +84,9 @@ class LightCut:
             parent, last_key = self._traverse(self.data, key)
             parent[last_key] = value
         except KeyError:
-            raise KeyError('key "' + key + '" not found.')
+            raise KeyError(f'Key "{key}" not found.')
         except IndexError:
-            raise IndexError('index out of range in key "' + key + '".')
+            raise IndexError(f'Index out of range in key "{key}".')
 
     def __str__(self) -> str:
         return str(self.data)
@@ -195,7 +195,7 @@ class Cut(LightCut):
             parent[last_key] = default
             return default
         except IndexError:
-            raise IndexError('index out of range in key "' + key + '".')
+            raise IndexError(f'Index out of range in key "{key}".')
 
     def _traverse_list(self, parent, key):
         key, *str_indexes = key.split("[")

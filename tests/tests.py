@@ -159,7 +159,7 @@ class TestLightCutCustomLogicMethods:
             del self.data["trainer.bicycle"]
             self.fail()
         except KeyError as error:
-            expected = "'key \"trainer.bicycle\" not found.'"
+            expected = "'Key \"trainer.bicycle\" not found.'"
             assert str(error) == expected
 
     def test_get(self):
@@ -182,7 +182,7 @@ class TestLightCutCustomLogicMethods:
             self.data["trainer.badges.Thunder"]
             self.fail()
         except KeyError as error:
-            assert str(error) == "'key \"trainer.badges.Thunder\" not found.'"
+            assert str(error) == "'Key \"trainer.badges.Thunder\" not found.'"
 
     def test_getitem_with_custom_separator(self):
         self.data = self.Wrapper(deepcopy(BASE), sep="+")
@@ -220,7 +220,7 @@ class TestLightCutCustomLogicMethods:
             self.data["trainer.bicycle.size"] = 180
             self.fail()
         except KeyError as error:
-            assert str(error) == "'key \"trainer.bicycle.size\" not found.'"
+            assert str(error) == "'Key \"trainer.bicycle.size\" not found.'"
 
     def test_setdefault(self):
         assert self.data.setdefault("trainer", "Not Found") == ASH
@@ -326,7 +326,7 @@ class TestCutWithDictCLM(TestLightCutCustomLogicMethods):
             del self.data["pokemons[42].type[1]"]
             self.fail()
         except IndexError as error:
-            expected = 'index out of range in key "pokemons[42].type[1]".'
+            expected = 'Index out of range in key "pokemons[42].type[1]".'
             assert str(error) == expected
 
     def test_delitem_list_item_through_nested_list(self):
@@ -339,7 +339,7 @@ class TestCutWithDictCLM(TestLightCutCustomLogicMethods):
             del self.data["team_sets[42][0]"]
             self.fail()
         except IndexError as error:
-            expected = 'index out of range in key "team_sets[42][0]".'
+            expected = 'Index out of range in key "team_sets[42][0]".'
             assert str(error) == expected
 
     def test_get_through_list(self):
@@ -367,7 +367,7 @@ class TestCutWithDictCLM(TestLightCutCustomLogicMethods):
             self.data["pokemons[42].type[1]"]
             self.fail()
         except IndexError as error:
-            expected = 'index out of range in key "pokemons[42].type[1]".'
+            expected = 'Index out of range in key "pokemons[42].type[1]".'
             assert str(error) == expected
 
     def test_in_through_list(self):
@@ -419,14 +419,14 @@ class TestCutWithDictCLM(TestLightCutCustomLogicMethods):
             self.data.setdefault("pokemons[666]", BULBASAUR)
             self.fail()
         except IndexError as error:
-            assert str(error) == 'index out of range in key "pokemons[666]".'
+            assert str(error) == 'Index out of range in key "pokemons[666]".'
 
     def test_setdefault_on_undefined_list_item(self):
         try:
             self.data.setdefault("pokemons[0].type[2]", "Funny")
             self.fail()
         except IndexError as error:
-            expected = 'index out of range in key "pokemons[0].type[2]".'
+            expected = 'Index out of range in key "pokemons[0].type[2]".'
             assert str(error) == expected
 
     def test_setdefault_through_list(self):
@@ -439,7 +439,7 @@ class TestCutWithDictCLM(TestLightCutCustomLogicMethods):
             self.data.setdefault("pokemons[42].sex", "Unknown")
             self.fail()
         except IndexError as error:
-            expected = 'index out of range in key "pokemons[42].sex".'
+            expected = 'Index out of range in key "pokemons[42].sex".'
             assert str(error) == expected
 
     def test_setdefault_through_nested_list(self):
@@ -453,7 +453,7 @@ class TestCutWithDictCLM(TestLightCutCustomLogicMethods):
             self.data.setdefault("team_sets[42][0]", BULBASAUR)
             self.fail()
         except IndexError as error:
-            expected = 'index out of range in key "team_sets[42][0]".'
+            expected = 'Index out of range in key "team_sets[42][0]".'
             assert str(error) == expected
 
     def test_setdefault_undefined_nested_list_item(self):
@@ -461,7 +461,7 @@ class TestCutWithDictCLM(TestLightCutCustomLogicMethods):
             self.data.setdefault("team_sets[0][42]", BULBASAUR)
             self.failt()
         except IndexError as error:
-            expected = 'index out of range in key "team_sets[0][42]".'
+            expected = 'Index out of range in key "team_sets[0][42]".'
             assert str(error) == expected
 
     def test_setitem_through_list(self):
@@ -482,7 +482,7 @@ class TestCutWithDictCLM(TestLightCutCustomLogicMethods):
             self.data["pokemons[42].type[1]"] = "Fire"
             self.fail()
         except IndexError as error:
-            expected = 'index out of range in key "pokemons[42].type[1]".'
+            expected = 'Index out of range in key "pokemons[42].type[1]".'
             assert str(error) == expected
 
     def test_settitem_nested_list_item(self):
@@ -495,7 +495,7 @@ class TestCutWithDictCLM(TestLightCutCustomLogicMethods):
             self.data["team_sets[42][0]"] = CHARMANDER
             self.fail()
         except IndexError as error:
-            expected = 'index out of range in key "team_sets[42][0]".'
+            expected = 'Index out of range in key "team_sets[42][0]".'
             assert str(error) == expected
 
     def test_update_from_dict_through_list(self):
