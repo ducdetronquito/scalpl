@@ -18,6 +18,24 @@ from typing import (
 TLightCut = TypeVar("TLightCut", bound="LightCut")
 
 
+def key_error(
+    failing_key: str, original_path: str, raised_error: Exception
+) -> KeyError:
+    return KeyError(
+        f"Cannot access key '{failing_key}' in path '{original_path}',"
+        f" because of error: {repr(raised_error)}."
+    )
+
+
+def index_error(
+    failing_key: str, original_path: str, raised_error: Exception
+) -> IndexError:
+    return IndexError(
+        f"Cannot access index '{failing_key}' in path '{original_path}',"
+        f" because of error: {repr(raised_error)}."
+    )
+
+
 class LightCut:
     """
         LightCut is a simple wrapper over the built-in dict class.
@@ -42,33 +60,35 @@ class LightCut:
         return bool(self.data)
 
     def __contains__(self, key: str) -> bool:
+        parent, last_key = self._traverse(self.data, key)
         try:
-            parent, last_key = self._traverse(self.data, key)
             parent[last_key]
             return True
         except (IndexError, KeyError):
             return False
 
-    def __delitem__(self, key: str) -> None:
+    def __delitem__(self, path: str) -> None:
+        parent, last_key = self._traverse(self.data, path)
+
         try:
-            parent, last_key = self._traverse(self.data, key)
             del parent[last_key]
-        except KeyError:
-            raise KeyError(f'Key "{key}" not found.')
-        except IndexError:
-            raise IndexError(f'Index out of range in key "{key}".')
+        except KeyError as error:
+            raise key_error(last_key, path, error)
+        except IndexError as error:
+            raise index_error(last_key, path, error)
 
     def __eq__(self, other: Any) -> bool:
         return self.data == other
 
-    def __getitem__(self, key: str) -> Any:
+    def __getitem__(self, path: str) -> Any:
+        parent, last_key = self._traverse(self.data, path)
+
         try:
-            parent, last_key = self._traverse(self.data, key)
             return parent[last_key]
-        except KeyError:
-            raise KeyError(f'Key "{key}" not found.')
-        except IndexError:
-            raise IndexError(f'Index out of range in key "{key}".')
+        except KeyError as error:
+            raise key_error(last_key, path, error)
+        except IndexError as error:
+            raise index_error(last_key, path, error)
 
     def __iter__(self) -> Iterator:
         return iter(self.data)
@@ -79,23 +99,28 @@ class LightCut:
     def __ne__(self, other: Any) -> bool:
         return self.data != other
 
-    def __setitem__(self, key: str, value: Any) -> None:
+    def __setitem__(self, path: str, value: Any) -> None:
+        parent, last_key = self._traverse(self.data, path)
+
         try:
-            parent, last_key = self._traverse(self.data, key)
             parent[last_key] = value
-        except KeyError:
-            raise KeyError(f'Key "{key}" not found.')
-        except IndexError:
-            raise IndexError(f'Index out of range in key "{key}".')
+        except IndexError as error:
+            raise index_error(last_key, path, error)
 
     def __str__(self) -> str:
         return str(self.data)
 
-    def _traverse(self, parent, key: str):
-        *parent_keys, last_key = key.split(self.sep)
-        if parent_keys:
-            for key in parent_keys:
-                parent = parent[key]
+    def _traverse(self, parent, path: str):
+        *parent_keys, last_key = path.split(self.sep)
+        if len(parent_keys) == 0:
+            return parent, last_key
+
+        try:
+            for sub_key in parent_keys:
+                parent = parent[sub_key]
+        except KeyError as error:
+            raise key_error(sub_key, path, error)
+
         return parent, last_key
 
     def all(self: TLightCut, key: str) -> Iterator[TLightCut]:
@@ -116,11 +141,13 @@ class LightCut:
     ) -> TLightCut:
         return cls(dict.fromkeys(seq, value))
 
-    def get(self, key: str, default: Optional[Any] = None) -> Any:
+    def get(self, path: str, default: Optional[Any] = None) -> Any:
         try:
-            return self[key]
-        except (KeyError, IndexError):
-            return default
+            return self[path]
+        except (KeyError, IndexError) as error:
+            if default is not None:
+                return default
+            raise error
 
     def keys(self) -> KeysView:
         return self.data.keys()
@@ -128,12 +155,18 @@ class LightCut:
     def items(self) -> ItemsView:
         return self.data.items()
 
-    def pop(self, key: str, default: Any = None) -> Any:
+    def pop(self, path: str, default: Any = None) -> Any:
+        parent, last_key = self._traverse(self.data, path)
         try:
-            parent, last_key = self._traverse(self.data, key)
             return parent.pop(last_key)
-        except (KeyError, IndexError):
-            return default
+        except IndexError as error:
+            if default is not None:
+                return default
+            raise index_error(last_key, path, error)
+        except KeyError as error:
+            if default is not None:
+                return default
+            raise key_error(last_key, path, error)
 
     def popitem(self) -> Any:
         return self.data.popitem()
@@ -153,6 +186,7 @@ class LightCut:
             pairs = data.items()
         except AttributeError:
             pairs = chain(data, kwargs.items())
+
         for key, value in pairs:
             self.__setitem__(key, value)
 
@@ -177,42 +211,64 @@ class Cut(LightCut):
     __slots__ = ()
 
     def setdefault(self, key: str, default: Optional[Any] = None) -> Any:
+        parent = self.data
+        *parent_keys, last_key = key.split(self.sep)
+
+        if parent_keys:
+            for _key in parent_keys:
+                parent, _key = self._traverse_list(parent, _key, key)
+                try:
+                    parent = parent[_key]
+                except KeyError:
+                    child: dict = {}
+                    parent[_key] = child
+                    parent = child
+                except IndexError as error:
+                    raise index_error(_key, key, error)
+
+        parent, last_key = self._traverse_list(parent, last_key, key)
+
         try:
-            parent = self.data
-            *parent_keys, last_key = key.split(self.sep)
-            if parent_keys:
-                for _key in parent_keys:
-                    parent, _key = self._traverse_list(parent, _key)
-                    try:
-                        parent = parent[_key]
-                    except KeyError:
-                        child: dict = {}
-                        parent[_key] = child
-                        parent = child
-            parent, last_key = self._traverse_list(parent, last_key)
             return parent[last_key]
         except KeyError:
             parent[last_key] = default
             return default
-        except IndexError:
-            raise IndexError(f'Index out of range in key "{key}".')
+        except IndexError as error:
+            raise index_error(last_key, key, error)
 
-    def _traverse_list(self, parent, key):
+    def _traverse_list(self, parent, key, original_path: str):
         key, *str_indexes = key.split("[")
-        if str_indexes:
+        if not str_indexes:
+            return parent, key
+
+        try:
             parent = parent[key]
+        except KeyError as error:
+            raise key_error(key, original_path, error)
+        try:
             for str_index in str_indexes[:-1]:
                 index = int(str_index[:-1])
                 parent = parent[index]
-            return parent, int(str_indexes[-1][:-1])
-        else:
-            return parent, key
+        except IndexError as error:
+            raise index_error(index, original_path, error)
+        try:
+            last_index = int(str_indexes[-1][:-1])
+        except ValueError as error:
+            raise index_error(str_indexes[-1][:-1], original_path, error)
 
-    def _traverse(self, parent, key):
-        *parent_keys, last_key = key.split(self.sep)
-        if parent_keys:
-            for _key in parent_keys:
-                parent, _key = self._traverse_list(parent, _key)
-                parent = parent[_key]
-        parent, last_key = self._traverse_list(parent, last_key)
+        return parent, last_index
+
+    def _traverse(self, parent, path: str):
+        *parent_keys, last_key = path.split(self.sep)
+        if len(parent_keys) > 0:
+            try:
+                for sub_key in parent_keys:
+                    parent, sub_key = self._traverse_list(parent, sub_key, path)
+                    parent = parent[sub_key]
+            except KeyError as error:
+                raise key_error(sub_key, path, error)
+            except IndexError as error:
+                raise index_error(sub_key, path, error)
+
+        parent, last_key = self._traverse_list(parent, last_key, path)
         return parent, last_key
