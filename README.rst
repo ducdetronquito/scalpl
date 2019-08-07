@@ -10,7 +10,7 @@ Scalpl
 .. image:: https://img.shields.io/badge/coverage-100%25-green.svg
     :target: #
 
-.. image:: https://img.shields.io/badge/pypi-v0.2.6-blue.svg
+.. image:: https://img.shields.io/badge/pypi-v0.3.0-blue.svg
     :target: https://pypi.python.org/pypi/scalpl/
 
 .. image:: https://travis-ci.org/ducdetronquito/scalpl.svg?branch=master
@@ -72,16 +72,16 @@ Installation
 Usage
 ~~~~~
 
-**Scalpl** provides a simple classe named **Cut** that wraps around your dictionary
+**Scalpl** provides a simple class named **Cut** that wraps around your dictionary
 and handles operations on nested ``dict`` and that can cut accross ``list`` item.
 
-This wrapper strictly follow the standard ``dict``
-`API <https://docs.python.org/3/library/stdtypes.html#dict>`_, that
+This wrapper strictly follows the standard ``dict``
+`API <https://docs.python.org/3/library/stdtypes.html#dict>`_, which
 means you can operate seamlessly on ``dict``,
-``collections.defaultdict`` or ``collections.OrderedDict``.
-
+``collections.defaultdict`` or ``collections.OrderedDict`` by using their methods
+with dot-separated keys.
  
-Let's see what it looks like with a toy dictionary ! 👇
+Let's see what it looks like with an example ! 👇
 
 .. code:: python
 
@@ -208,6 +208,7 @@ remove all keys.
     shallow_copy = proxy.copy()
 
     proxy.clear()
+
 
 Benchmark
 ~~~~~~~~~

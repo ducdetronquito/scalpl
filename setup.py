@@ -5,17 +5,15 @@ with open("README.rst", "r", encoding="utf-8") as f:
 
 setup(
     name="scalpl",
-    py_modules=["scalpl"],
-    version="0.2.6",
-    description=(
-        "A lightweight wrapper to operate on nested " "dictionaries seamlessly."
-    ),
+    packages=["scalpl"],
+    version="0.3.0",
+    description=("A lightweight wrapper to operate on nested dictionaries seamlessly."),
     long_description=readme,
     author="Guillaume Paulet",
     author_email="guillaume.paulet@giome.fr",
     license="Public Domain",
     url="https://github.com/ducdetronquito/scalpl",
-    download_url=("https://github.com/ducdetronquito/scalpl/archive/" "0.2.6.tar.gz"),
+    download_url=("https://github.com/ducdetronquito/scalpl/archive/" "0.3.0.tar.gz"),
     tests_require=[
         "addict",
         "mypy",
@@ -39,7 +37,6 @@ setup(
         "wrapper",
     ],
     classifiers=[
-        "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "License :: Public Domain",
         "Operating System :: OS Independent",
