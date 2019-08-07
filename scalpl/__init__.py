@@ -1,1 +1,1 @@
-from .scalpl import LightCut, Cut
+from .scalpl import Cut

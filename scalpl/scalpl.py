@@ -15,9 +15,6 @@ from typing import (
 )
 
 
-TLightCut = TypeVar("TLightCut", bound="LightCut")
-
-
 def key_error(failing_key, original_path, raised_error):
     return KeyError(
         f"Cannot access key '{failing_key}' in path '{original_path}',"
@@ -32,18 +29,21 @@ def index_error(failing_key, original_path, raised_error):
     )
 
 
-class LightCut:
+TCut = TypeVar("TCut", bound="Cut")
+
+
+class Cut:
     """
-        LightCut is a simple wrapper over the built-in dict class.
+        Cut is a simple wrapper over the built-in dict class.
 
         It enables the standard dict API to operate on nested dictionnaries
-        by using dot-separated string keys.
+        and cut accross list item by using dot-separated string keys.
 
         ex:
             query = {...} # Any dict structure
             proxy = Cut(query)
-            proxy['pokemons.charmander.level']
-            proxy['pokemons.charmander.level'] = 666
+            proxy['pokemons[0].level']
+            proxy['pokemons[0].level'] = 666
     """
 
     __slots__ = ("data", "sep")
@@ -106,20 +106,7 @@ class LightCut:
     def __str__(self) -> str:
         return str(self.data)
 
-    def _traverse(self, parent, path: str):
-        *parent_keys, last_key = path.split(self.sep)
-        if len(parent_keys) == 0:
-            return parent, last_key
-
-        try:
-            for sub_key in parent_keys:
-                parent = parent[sub_key]
-        except KeyError as error:
-            raise key_error(sub_key, path, error)
-
-        return parent, last_key
-
-    def all(self: TLightCut, path: str) -> Iterator[TLightCut]:
+    def all(self: TCut, path: str) -> Iterator[TCut]:
         """Wrap each item of an Iterable."""
         items = self[path]
         cls = self.__class__
@@ -133,8 +120,8 @@ class LightCut:
 
     @classmethod
     def fromkeys(
-        cls: Type[TLightCut], seq: Iterable, value: Optional[Iterable] = None
-    ) -> TLightCut:
+        cls: Type[TCut], seq: Iterable, value: Optional[Iterable] = None
+    ) -> TCut:
         return cls(dict.fromkeys(seq, value))
 
     def get(self, path: str, default: Optional[Any] = None) -> Any:
@@ -167,45 +154,6 @@ class LightCut:
     def popitem(self) -> Any:
         return self.data.popitem()
 
-    def setdefault(self, path: str, default: Any = None) -> Any:
-        parent = self.data
-        *parent_keys, last_key = path.split(self.sep)
-        if parent_keys:
-            for key in parent_keys:
-                parent = parent.setdefault(key, {})
-        return parent.setdefault(last_key, default)
-
-    def update(self, data=None, **kwargs):
-        data = data or {}
-        try:
-            data.update(kwargs)
-            pairs = data.items()
-        except AttributeError:
-            pairs = chain(data, kwargs.items())
-
-        for key, value in pairs:
-            self.__setitem__(key, value)
-
-    def values(self) -> ValuesView:
-        return self.data.values()
-
-
-class Cut(LightCut):
-    """
-        Cut is a simple wrapper over the built-in dict class.
-
-        It enables the standard dict API to operate on nested dictionnaries
-        and cut accross list item by using dot-separated string keys.
-
-        ex:
-            query = {...} # Any dict structure
-            proxy = Cut(query)
-            proxy['pokemons[0].level']
-            proxy['pokemons[0].level'] = 666
-    """
-
-    __slots__ = ()
-
     def setdefault(self, path: str, default: Optional[Any] = None) -> Any:
         parent = self.data
         *parent_keys, last_key = path.split(self.sep)
@@ -231,6 +179,20 @@ class Cut(LightCut):
             return default
         except IndexError as error:
             raise index_error(last_key, path, error)
+
+    def update(self, data=None, **kwargs):
+        data = data or {}
+        try:
+            data.update(kwargs)
+            pairs = data.items()
+        except AttributeError:
+            pairs = chain(data, kwargs.items())
+
+        for key, value in pairs:
+            self.__setitem__(key, value)
+
+    def values(self) -> ValuesView:
+        return self.data.values()
 
     def _traverse_list(self, parent, key, original_path: str):
         key, *str_indexes = key.split("[")

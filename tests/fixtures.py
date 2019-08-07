@@ -2,7 +2,7 @@ from collections import defaultdict, OrderedDict
 from copy import deepcopy
 from functools import partial
 import pytest
-from scalpl import Cut, LightCut
+from scalpl import Cut
 
 
 ASH = {
@@ -43,14 +43,7 @@ BASE = {"trainer": ASH, "pokemons": POKEMONS, "team_sets": TEAM_SETS}
 
 
 @pytest.fixture(
-    params=[
-        (LightCut, dict),
-        (LightCut, OrderedDict),
-        (LightCut, partial(defaultdict, None)),
-        (Cut, dict),
-        (Cut, OrderedDict),
-        (Cut, partial(defaultdict, None)),
-    ]
+    params=[(Cut, dict), (Cut, OrderedDict), (Cut, partial(defaultdict, None))]
 )
 def proxy(request):
     scalpl_class = request.param[0]
@@ -58,31 +51,9 @@ def proxy(request):
     return scalpl_class(underlying_dict_class(deepcopy(BASE)))
 
 
-@pytest.fixture(
-    params=[(Cut, dict), (Cut, OrderedDict), (Cut, partial(defaultdict, None))]
-)
-def cut_proxy(request):
-    scalpl_class = request.param[0]
-    underlying_dict_class = request.param[1]
-    return scalpl_class(underlying_dict_class(deepcopy(BASE)))
-
-
-@pytest.fixture(
-    params=[
-        (LightCut, dict),
-        (LightCut, OrderedDict),
-        (LightCut, partial(defaultdict, None)),
-    ]
-)
-def lightcut_proxy(request):
-    scalpl_class = request.param[0]
-    underlying_dict_class = request.param[1]
-    return scalpl_class(underlying_dict_class(deepcopy(BASE)))
-
-
-@pytest.fixture(params=[LightCut, Cut])
+@pytest.fixture()
 def scalpl_class(request):
-    return request.param
+    return Cut
 
 
 @pytest.fixture(params=[dict, OrderedDict, partial(defaultdict, None)])
