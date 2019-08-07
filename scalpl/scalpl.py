@@ -18,18 +18,14 @@ from typing import (
 TLightCut = TypeVar("TLightCut", bound="LightCut")
 
 
-def key_error(
-    failing_key: str, original_path: str, raised_error: Exception
-) -> KeyError:
+def key_error(failing_key, original_path, raised_error):
     return KeyError(
         f"Cannot access key '{failing_key}' in path '{original_path}',"
         f" because of error: {repr(raised_error)}."
     )
 
 
-def index_error(
-    failing_key: str, original_path: str, raised_error: Exception
-) -> IndexError:
+def index_error(failing_key, original_path, raised_error):
     return IndexError(
         f"Cannot access index '{failing_key}' in path '{original_path}',"
         f" because of error: {repr(raised_error)}."
@@ -245,12 +241,14 @@ class Cut(LightCut):
             parent = parent[key]
         except KeyError as error:
             raise key_error(key, original_path, error)
+
         try:
             for str_index in str_indexes[:-1]:
                 index = int(str_index[:-1])
                 parent = parent[index]
         except IndexError as error:
             raise index_error(index, original_path, error)
+
         try:
             last_index = int(str_indexes[-1][:-1])
         except ValueError as error:
