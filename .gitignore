@@ -20,3 +20,6 @@ htmlcov/*
 # Tests
 reddit.json
 .cache/*
+
+# IDE
+.vscode/
