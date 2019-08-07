@@ -54,34 +54,28 @@ such as `Addict <https://github.com/mewwts/addict>`_ or
 `Box <https://github.com/cdgriffith/Box>`_ , but if you give **Scalpl**
 a try, you will find it:
 
-* ⚡ Fast
 * 🚀 Powerful as the standard dict API
+* ⚡ Lightweight
 * 👌 Well tested
 
 
 Installation
 ~~~~~~~~~~~~
 
-**Scalpl** is a Python3-only module that you can install via ``pip``
+**Scalpl** is a Python3 library that you can install via ``pip``
 
 .. code:: sh
 
     pip3 install scalpl
 
+
 Usage
 ~~~~~
 
-**Scalpl** provides two classes that can wrap around your dictionaries:
+**Scalpl** provides a simple classe named **Cut** that wraps around your dictionary
+and handles operations on nested ``dict`` and that can cut accross ``list`` item.
 
--  **LightCut**: a wrapper that handles operations on nested ``dict``.
--  **Cut**: a wrapper that handles operations on nested ``dict`` and
-   that can cut accross ``list`` item.
-
-Usually, you will only need to use the ``Cut`` wrapper, but if you do
-not need to operate through lists, you should work with the ``LightCut``
-wrapper as its computation overhead is a bit smaller.
-
-These two wrappers strictly follow the standard ``dict``
+This wrapper strictly follow the standard ``dict``
 `API <https://docs.python.org/3/library/stdtypes.html#dict>`_, that
 means you can operate seamlessly on ``dict``,
 ``collections.defaultdict`` or ``collections.OrderedDict``.
