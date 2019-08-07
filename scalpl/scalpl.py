@@ -55,8 +55,8 @@ class LightCut:
     def __bool__(self) -> bool:
         return bool(self.data)
 
-    def __contains__(self, key: str) -> bool:
-        parent, last_key = self._traverse(self.data, key)
+    def __contains__(self, path: str) -> bool:
+        parent, last_key = self._traverse(self.data, path)
         try:
             parent[last_key]
             return True
@@ -119,9 +119,9 @@ class LightCut:
 
         return parent, last_key
 
-    def all(self: TLightCut, key: str) -> Iterator[TLightCut]:
+    def all(self: TLightCut, path: str) -> Iterator[TLightCut]:
         """Wrap each item of an Iterable."""
-        items = self[key]
+        items = self[path]
         cls = self.__class__
         return (cls(_dict, self.sep) for _dict in items)
 
@@ -167,9 +167,9 @@ class LightCut:
     def popitem(self) -> Any:
         return self.data.popitem()
 
-    def setdefault(self, key: str, default: Any = None) -> Any:
+    def setdefault(self, path: str, default: Any = None) -> Any:
         parent = self.data
-        *parent_keys, last_key = key.split(self.sep)
+        *parent_keys, last_key = path.split(self.sep)
         if parent_keys:
             for key in parent_keys:
                 parent = parent.setdefault(key, {})
@@ -206,13 +206,13 @@ class Cut(LightCut):
 
     __slots__ = ()
 
-    def setdefault(self, key: str, default: Optional[Any] = None) -> Any:
+    def setdefault(self, path: str, default: Optional[Any] = None) -> Any:
         parent = self.data
-        *parent_keys, last_key = key.split(self.sep)
+        *parent_keys, last_key = path.split(self.sep)
 
         if parent_keys:
             for _key in parent_keys:
-                parent, _key = self._traverse_list(parent, _key, key)
+                parent, _key = self._traverse_list(parent, _key, path)
                 try:
                     parent = parent[_key]
                 except KeyError:
@@ -220,9 +220,9 @@ class Cut(LightCut):
                     parent[_key] = child
                     parent = child
                 except IndexError as error:
-                    raise index_error(_key, key, error)
+                    raise index_error(_key, path, error)
 
-        parent, last_key = self._traverse_list(parent, last_key, key)
+        parent, last_key = self._traverse_list(parent, last_key, path)
 
         try:
             return parent[last_key]
@@ -230,7 +230,7 @@ class Cut(LightCut):
             parent[last_key] = default
             return default
         except IndexError as error:
-            raise index_error(last_key, key, error)
+            raise index_error(last_key, path, error)
 
     def _traverse_list(self, parent, key, original_path: str):
         key, *str_indexes = key.split("[")
