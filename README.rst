@@ -88,7 +88,7 @@ Let's see what it looks like with an example ! 👇
     from scalpl import Cut
 
     data = {
-        'pokemons': [
+        'pokemon': [
             {
                 'name': 'Bulbasaur',
                 'type': ['Grass', 'Poison'],
@@ -122,9 +122,9 @@ You can use the built-in ``dict`` API to access its values.
 
 .. code:: python
 
-    proxy['pokemons[0].name']
+    proxy['pokemon[0].name']
     # 'Bulbasaur'
-    proxy.get('pokemons[1].sex', 'Unknown')
+    proxy.get('pokemon[1].sex', 'Unknown')
     # 'Unknown'
     'trainers[0].hometown' in proxy
     # True
@@ -137,14 +137,14 @@ use a different character that better suits your needs.
     # You just have to provide one when you wrap your data.
     proxy = Cut(data, sep='->')
     # Yarrr!
-    proxy['pokemons[0]->name']
+    proxy['pokemon[0]->name']
 
 You can also easily create or update any key/value pair.
 
 .. code:: python
 
-    proxy['pokemons[1].weaknesses'] = ['Ground', 'Rock', 'Water']
-    proxy['pokemons[1].weaknesses']
+    proxy['pokemon[1].weaknesses'] = ['Ground', 'Rock', 'Water']
+    proxy['pokemon[1].weaknesses']
     # ['Ground', 'Rock', 'Water']
     proxy.update({
         'trainers[0].region': 'Kanto',
@@ -156,7 +156,7 @@ you to create any missing dictionary when you try to access a nested key.
 
 .. code:: python
 
-    proxy.setdefault('pokemons[2].moves.Scratch.power', 40)
+    proxy.setdefault('pokemon[2].moves.Scratch.power', 40)
     # 40
 
 
@@ -165,9 +165,9 @@ And it is still possible to iterate over your data.
 .. code:: python
 
     proxy.items()
-    # [('pokemons', [...]), ('trainers', [...])]
+    # [('pokemon', [...]), ('trainers', [...])]
     proxy.keys()
-    # ['pokemons', 'trainers']
+    # ['pokemon', 'trainers']
     proxy.values()
     # [[...], [...]]
 
@@ -176,19 +176,19 @@ By the way, if you have to operate on a list of dictionaries, the
 
 .. code:: python
 
-    # Let's teach these pokemons some sick moves !
-    for pokemon in proxy.all('pokemons'):
+    # Let's teach these pokemon some sick moves !
+    for pokemon in proxy.all('pokemon'):
         pokemon.setdefault('moves.Scratch.power', 40)
 
 Also, you can remove a specific or an arbitrary key/value pair.
 
 .. code:: python
 
-    proxy.pop('pokemons[0].category')
+    proxy.pop('pokemon[0].category')
     # 'Seed'
     proxy.popitem()
     # ('trainers', [...])
-    del proxy['pokemons[1].type']
+    del proxy['pokemon[1].type']
 
 Because **Scalpl** is only a wrapper around your data, it means you can
 get it back at will without any conversion cost. If you use an external
@@ -198,7 +198,7 @@ API that operates on dictionary, it will just work.
 
     import json
     json.dumps(proxy.data)
-    # "{'pokemons': [...]}"
+    # "{'pokemon': [...]}"
 
 Finally, you can retrieve a shallow copy of the inner dictionary or
 remove all keys.

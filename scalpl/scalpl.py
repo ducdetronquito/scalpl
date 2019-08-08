@@ -42,8 +42,8 @@ class Cut:
         ex:
             query = {...} # Any dict structure
             proxy = Cut(query)
-            proxy['pokemons[0].level']
-            proxy['pokemons[0].level'] = 666
+            proxy['pokemon[0].level']
+            proxy['pokemon[0].level'] = 666
     """
 
     __slots__ = ("data", "sep")

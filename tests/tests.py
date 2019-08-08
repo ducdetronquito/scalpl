@@ -158,7 +158,7 @@ class TestItems:
     def test_items(self, proxy):
         result = sorted(proxy.items())
         expected = [
-            ("pokemons", [BULBASAUR, CHARMANDER, SQUIRTLE]),
+            ("pokemon", [BULBASAUR, CHARMANDER, SQUIRTLE]),
             ("team_sets", [FIRST_SET, SECOND_SET]),
             ("trainer", ASH),
         ]
@@ -168,13 +168,13 @@ class TestItems:
 class TestIter:
     def test_iter(self, proxy):
         keys = sorted([key for key in proxy])
-        assert keys == ["pokemons", "team_sets", "trainer"]
+        assert keys == ["pokemon", "team_sets", "trainer"]
 
 
 class TestKeys:
     def test_keys(self, proxy):
         result = sorted(proxy.keys())
-        assert result == ["pokemons", "team_sets", "trainer"]
+        assert result == ["pokemon", "team_sets", "trainer"]
 
 
 class TestLen:
@@ -209,15 +209,15 @@ class TestDelitem:
         assert str(error.value) == str(expected_error)
 
     def test_through_list(self, proxy):
-        del proxy["pokemons[1].category"]
-        assert "category" not in proxy.data["pokemons"][1]
+        del proxy["pokemon[1].category"]
+        assert "category" not in proxy.data["pokemon"][1]
 
     def test_undefined_key_through_list_(self, proxy):
         with pytest.raises(KeyError) as error:
-            del proxy["pokemons[1].has_been_seen"]
+            del proxy["pokemon[1].has_been_seen"]
 
         expected_error = KeyError(
-            "Cannot access key 'has_been_seen' in path 'pokemons[1].has_been_seen', "
+            "Cannot access key 'has_been_seen' in path 'pokemon[1].has_been_seen', "
             "because of error: KeyError('has_been_seen',)."
         )
         assert str(error.value) == str(expected_error)
@@ -237,25 +237,25 @@ class TestDelitem:
         assert str(error.value) == str(expected_error)
 
     def test_list_item(self, proxy):
-        del proxy["pokemons[0].types[1]"]
-        assert len(proxy.data["pokemons"][0]["types"]) == 1
+        del proxy["pokemon[0].types[1]"]
+        assert len(proxy.data["pokemon"][0]["types"]) == 1
 
     def test_undefined_list_item(self, proxy):
         with pytest.raises(IndexError) as error:
-            del proxy["pokemons[0].types[42]"]
+            del proxy["pokemon[0].types[42]"]
 
         expected_error = IndexError(
-            "Cannot access index '42' in path 'pokemons[0].types[42]', "
+            "Cannot access index '42' in path 'pokemon[0].types[42]', "
             "because of error: IndexError('list assignment index out of range',)."
         )
         assert str(error.value) == str(expected_error)
 
     def test_undefined_list_index(self, proxy):
         with pytest.raises(IndexError) as error:
-            del proxy["pokemons[42].types[1]"]
+            del proxy["pokemon[42].types[1]"]
 
         expected = IndexError(
-            "Cannot access index '42' in path 'pokemons[42].types[1]', "
+            "Cannot access index '42' in path 'pokemon[42].types[1]', "
             "because of error: IndexError('list index out of range',)."
         )
         assert str(error.value) == str(expected)
@@ -287,17 +287,17 @@ class TestGet:
         assert proxy.get("trainer.badges.Thunder", False) is False
 
     def test_get_through_list(self, proxy):
-        assert proxy.get("pokemons[0].types[1]") == "Poison"
+        assert proxy.get("pokemon[0].types[1]") == "Poison"
 
     def test_get_through_nested_list(self, proxy):
         result = proxy.get("team_sets[0][0].name", "Unknwown")
         assert result == "Charmander"
 
     def test_get_undefined_key_through_list(self, proxy):
-        assert proxy.get("pokemons[0].sex", "Unknown") == "Unknown"
+        assert proxy.get("pokemon[0].sex", "Unknown") == "Unknown"
 
     def test_get_undefined_list_item(self, proxy):
-        assert proxy.get("pokemons[0].types[42]", "Unknown") == "Unknown"
+        assert proxy.get("pokemon[0].types[42]", "Unknown") == "Unknown"
 
 
 class TestGetitem:
@@ -323,27 +323,27 @@ class TestGetitem:
         assert proxy["trainer+badges+Boulder"] is True
 
     def test_getitem_through_list(self, proxy):
-        assert proxy["pokemons[0].types[1]"] == "Poison"
+        assert proxy["pokemon[0].types[1]"] == "Poison"
 
     def test_getitem_through_nested_list(self, proxy):
         assert proxy["team_sets[0][0].name"] == "Charmander"
 
     def test_getitem_through_undefined_list_item_raises_exception(self, proxy):
         with pytest.raises(IndexError) as error:
-            proxy["pokemons[42].types[1]"]
+            proxy["pokemon[42].types[1]"]
 
         expected = IndexError(
-            "Cannot access index '42' in path 'pokemons[42].types[1]', "
+            "Cannot access index '42' in path 'pokemon[42].types[1]', "
             "because of error: IndexError('list index out of range',)."
         )
         assert str(error.value) == str(expected)
 
     def test_getitem_through_undefined_list_item_raises_exception(self, proxy):
         with pytest.raises(IndexError) as error:
-            proxy["pokemons[0].types[42]"]
+            proxy["pokemon[0].types[42]"]
 
         expected = IndexError(
-            "Cannot access index '42' in path 'pokemons[0].types[42]', "
+            "Cannot access index '42' in path 'pokemon[0].types[42]', "
             "because of error: IndexError('list index out of range',)."
         )
         assert str(error.value) == str(expected)
@@ -366,17 +366,17 @@ class TestIn:
         assert str(error.value) == str(expected)
 
     def test_through_list(self, proxy):
-        assert "pokemons[0].types[1]" in proxy
+        assert "pokemon[0].types[1]" in proxy
 
     def test_through_nested_list(self, proxy):
         assert "team_sets[0][0].name" in proxy
 
     def test_through_undefined_list_item(self, proxy):
         with pytest.raises(IndexError) as error:
-            "pokemons[42].favorite_meal" in proxy
+            "pokemon[42].favorite_meal" in proxy
 
         expected = IndexError(
-            "Cannot access index '42' in path 'pokemons[42].favorite_meal', "
+            "Cannot access index '42' in path 'pokemon[42].favorite_meal', "
             "because of error: IndexError('list index out of range',)."
         )
         assert str(error.value) == str(expected)
@@ -407,25 +407,25 @@ class TestPop:
 
     def test_when_index_is_undefined(self, proxy):
         with pytest.raises(IndexError) as error:
-            proxy.pop("pokemons[42]")
+            proxy.pop("pokemon[42]")
 
         expected_error = IndexError(
-            "Cannot access index '42' in path 'pokemons[42]', "
+            "Cannot access index '42' in path 'pokemon[42]', "
             "because of error: IndexError('pop index out of range',)."
         )
         assert str(error.value) == str(expected_error)
 
     def test_pop_list_item(self, proxy):
-        assert proxy.pop("pokemons[0].types[1]") == "Poison"
-        assert len(proxy.data["pokemons"][0]["types"]) == 1
+        assert proxy.pop("pokemon[0].types[1]") == "Poison"
+        assert len(proxy.data["pokemon"][0]["types"]) == 1
 
     def test_pop_list_item_through_nested_list(self, proxy):
         assert proxy.pop("team_sets[0][0]") == CHARMANDER
         assert len(proxy.data["team_sets"][0]) == 2
 
     def test_pop_through_list(self, proxy):
-        assert proxy.pop("pokemons[0].types") == ["Grass", "Poison"]
-        assert "types" not in proxy.data["pokemons"][0]
+        assert proxy.pop("pokemon[0].types") == ["Grass", "Poison"]
+        assert "types" not in proxy.data["pokemon"][0]
 
     def test_pop_through_nested_list(self, proxy):
         assert proxy.pop("team_sets[0][0].types") == ["Fire"]
@@ -438,22 +438,22 @@ class TestSetitem:
         assert proxy["trainer"]["badges"]["Boulder"] is False
 
     def test_set_a_value_through_list(self, proxy):
-        proxy["pokemons[0].category"] = "Onion"
-        assert proxy.data["pokemons"][0]["category"] == "Onion"
+        proxy["pokemon[0].category"] = "Onion"
+        assert proxy.data["pokemon"][0]["category"] == "Onion"
 
     def test_set_a_value_through_nested_list(self, proxy):
         proxy["team_sets[0][0].category"] = "Lighter"
         assert proxy.data["team_sets"][0][0]["category"] == "Lighter"
 
     def test_set_a_value_through_a_nested_item(self, proxy):
-        proxy["pokemons[0].types[1]"] = "Fire"
-        assert proxy["pokemons"][0]["types"][1] == "Fire"
+        proxy["pokemon[0].types[1]"] = "Fire"
+        assert proxy["pokemon"][0]["types"][1] == "Fire"
 
     def test_set_value_on_an_undefined_list_item(self, proxy):
         with pytest.raises(IndexError) as error:
-            proxy["pokemons[42].types[1]"] = "Fire"
+            proxy["pokemon[42].types[1]"] = "Fire"
 
-            expected = 'Index out of range in key "pokemons[42].types[1]".'
+            expected = 'Index out of range in key "pokemon[42].types[1]".'
             assert str(error) == expected
 
     def test_set_a_value_in_nested_list_item(self, proxy):
@@ -485,7 +485,7 @@ class TestSetdefault:
         assert proxy.data["trainer"]["bicycle"]["size"] == 180
 
     def test_on_list_item(self, proxy):
-        assert proxy.setdefault("pokemons[0].types[1]", "Funny") == "Poison"
+        assert proxy.setdefault("pokemon[0].types[1]", "Funny") == "Poison"
 
     def test_on_list_item_through_nested_list(self, proxy):
         result = proxy.setdefault("team_sets[0][0]", "MissingNo")
@@ -493,26 +493,26 @@ class TestSetdefault:
 
     def test_on_undefined_first_item(self, proxy):
         with pytest.raises(IndexError) as error:
-            proxy.setdefault("pokemons[666]", BULBASAUR)
+            proxy.setdefault("pokemon[666]", BULBASAUR)
 
-            assert str(error) == 'Index out of range in key "pokemons[666]".'
+            assert str(error) == 'Index out of range in key "pokemon[666]".'
 
     def test_on_undefined_list_item(self, proxy):
         with pytest.raises(IndexError) as error:
-            proxy.setdefault("pokemons[0].types[2]", "Funny")
+            proxy.setdefault("pokemon[0].types[2]", "Funny")
 
-            expected = 'Index out of range in key "pokemons[0].types[2]".'
+            expected = 'Index out of range in key "pokemon[0].types[2]".'
             assert str(error) == expected
 
     def test_through_list(self, proxy):
-        assert proxy.setdefault("pokemons[0].sex", "Unknown") == "Unknown"
-        assert proxy.data["pokemons"][0]["sex"] == "Unknown"
+        assert proxy.setdefault("pokemon[0].sex", "Unknown") == "Unknown"
+        assert proxy.data["pokemon"][0]["sex"] == "Unknown"
 
     def test_undefined_key_through_list(self, proxy):
         with pytest.raises(IndexError) as error:
-            proxy.setdefault("pokemons[42].sex", "Unknown")
+            proxy.setdefault("pokemon[42].sex", "Unknown")
 
-            expected = 'Index out of range in key "pokemons[42].sex".'
+            expected = 'Index out of range in key "pokemon[42].sex".'
             assert str(error) == expected
 
     def test_through_nested_list(self, proxy):
@@ -522,10 +522,10 @@ class TestSetdefault:
 
     def test_undefined_list_item(self, proxy):
         with pytest.raises(IndexError) as error:
-            proxy.setdefault("pokemons[42]", BULBASAUR)
+            proxy.setdefault("pokemon[42]", BULBASAUR)
 
             expected_error = IndexError(
-                "Cannot access index '42' in path 'pokemons[42]', "
+                "Cannot access index '42' in path 'pokemon[42]', "
                 "because of error: IndexError('list index out of range',)."
             )
             assert str(error) == expected
@@ -565,9 +565,9 @@ class TestUpdate:
         assert proxy["game"] == "Pokemon Blue"
 
     def test_update_from_dict_through_list(self, proxy):
-        from_other = {"pokemons[1].category": "Lighter"}
+        from_other = {"pokemon[1].category": "Lighter"}
         proxy.update(from_other)
-        assert proxy.data["pokemons"][1]["category"] == "Lighter"
+        assert proxy.data["pokemon"][1]["category"] == "Lighter"
 
     def test_update_from_dict_through_nested_list(self, proxy):
         from_other = {"team_sets[0][0].category": "Lighter"}
@@ -575,9 +575,9 @@ class TestUpdate:
         assert proxy.data["team_sets"][0][0]["category"] == "Lighter"
 
     def test_update_list_item_from_dict(self, proxy):
-        from_other = {"pokemons[0].types[1]": "Onion"}
+        from_other = {"pokemon[0].types[1]": "Onion"}
         proxy.update(from_other)
-        assert proxy["pokemons"][0]["types"][1] == "Onion"
+        assert proxy["pokemon"][0]["types"][1] == "Onion"
 
     def test_update_nested_list_item_from_dict(self, proxy):
         from_other = {"team_sets[0][0]": SQUIRTLE}
@@ -585,34 +585,34 @@ class TestUpdate:
         assert proxy.data["team_sets"][0][0] == SQUIRTLE
 
     def test_update_from_dict_and_keyword_args_through_list(self, proxy):
-        from_other = {"pokemons[1].category": "Lighter"}
+        from_other = {"pokemon[1].category": "Lighter"}
         proxy.update(from_other, game="Pokemon Blue")
-        assert proxy["pokemons"][1]["category"] == "Lighter"
+        assert proxy["pokemon"][1]["category"] == "Lighter"
         assert proxy["game"] == "Pokemon Blue"
 
     def test_update_from_list_through_list(self, proxy):
-        from_other = [("pokemons[1].category", "Lighter")]
+        from_other = [("pokemon[1].category", "Lighter")]
         proxy.update(from_other)
-        assert proxy["pokemons"][1]["category"] == "Lighter"
+        assert proxy["pokemon"][1]["category"] == "Lighter"
 
     def test_update_from_list_and_keyword_args_through_list(self, proxy):
-        from_other = [("pokemons[1].category", "Lighter")]
+        from_other = [("pokemon[1].category", "Lighter")]
         proxy.update(from_other, game="Pokemon Blue")
-        assert proxy["pokemons"][1]["category"] == "Lighter"
+        assert proxy["pokemon"][1]["category"] == "Lighter"
         assert proxy["game"] == "Pokemon Blue"
 
 
 class TestAll:
     def test_all_returns_generator(self, proxy):
-        result = proxy.all("pokemons")
+        result = proxy.all("pokemon")
         assert isinstance(result, GeneratorType) is True
 
     def test_generated_values(self, proxy):
-        values = [item.data for item in proxy.all("pokemons")]
+        values = [item.data for item in proxy.all("pokemon")]
         assert values == [BULBASAUR, CHARMANDER, SQUIRTLE]
 
     def test_all_with_custom_separator(self, proxy):
         proxy.sep = "/"
-        separators = [item.sep for item in proxy.all("pokemons")]
+        separators = [item.sep for item in proxy.all("pokemon")]
 
         assert all(sep == "/" for sep in separators)
