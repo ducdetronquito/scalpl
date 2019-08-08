@@ -1,4 +1,4 @@
-.. image:: https://raw.githubusercontent.com/ducdetronquito/scalpl/master/scalpl.png
+.. image:: https://raw.githubusercontent.com/ducdetronquito/scalpl/master/assets/scalpl.png
     :target: https://github.com/ducdetronquito/scalpl
 
 Scalpl
@@ -10,7 +10,7 @@ Scalpl
 .. image:: https://img.shields.io/badge/coverage-100%25-green.svg
     :target: #
 
-.. image:: https://img.shields.io/badge/pypi-v0.2.6-blue.svg
+.. image:: https://img.shields.io/badge/pypi-v0.3.0-blue.svg
     :target: https://pypi.python.org/pypi/scalpl/
 
 .. image:: https://travis-ci.org/ducdetronquito/scalpl.svg?branch=master
@@ -54,40 +54,34 @@ such as `Addict <https://github.com/mewwts/addict>`_ or
 `Box <https://github.com/cdgriffith/Box>`_ , but if you give **Scalpl**
 a try, you will find it:
 
-* ⚡ Fast
 * 🚀 Powerful as the standard dict API
+* ⚡ Lightweight
 * 👌 Well tested
 
 
 Installation
 ~~~~~~~~~~~~
 
-**Scalpl** is a Python3-only module that you can install via ``pip``
+**Scalpl** is a Python3 library that you can install via ``pip``
 
 .. code:: sh
 
     pip3 install scalpl
 
+
 Usage
 ~~~~~
 
-**Scalpl** provides two classes that can wrap around your dictionaries:
+**Scalpl** provides a simple class named **Cut** that wraps around your dictionary
+and handles operations on nested ``dict`` and that can cut accross ``list`` item.
 
--  **LightCut**: a wrapper that handles operations on nested ``dict``.
--  **Cut**: a wrapper that handles operations on nested ``dict`` and
-   that can cut accross ``list`` item.
-
-Usually, you will only need to use the ``Cut`` wrapper, but if you do
-not need to operate through lists, you should work with the ``LightCut``
-wrapper as its computation overhead is a bit smaller.
-
-These two wrappers strictly follow the standard ``dict``
-`API <https://docs.python.org/3/library/stdtypes.html#dict>`_, that
+This wrapper strictly follows the standard ``dict``
+`API <https://docs.python.org/3/library/stdtypes.html#dict>`_, which
 means you can operate seamlessly on ``dict``,
-``collections.defaultdict`` or ``collections.OrderedDict``.
-
+``collections.defaultdict`` or ``collections.OrderedDict`` by using their methods
+with dot-separated keys.
  
-Let's see what it looks like with a toy dictionary ! 👇
+Let's see what it looks like with an example ! 👇
 
 .. code:: python
 
@@ -215,6 +209,7 @@ remove all keys.
 
     proxy.clear()
 
+
 Benchmark
 ~~~~~~~~~
 
@@ -223,56 +218,57 @@ of `Scalpl <https://github.com/ducdetronquito/scalpl>`_ compared to `Addict <htt
 `Box <https://github.com/cdgriffith/Box>`_ and the built-in ``dict``.
 
 It will summarize the *number of operations per second* that each library is 
-able to perform on the JSON dump of the `Python subreddit main page <https://www.reddit.com/r/Python.json>`_.
+able to perform on a portion of the JSON dump of the `Python subreddit main page <https://www.reddit.com/r/Python.json>`_.
 
 You can run this benchmark on your machine with the following command:
 
-    python3 ./performance_tests.py
+    python3 ./benchmarks/performance_comparison.py
 
 Here are the results obtained on an Intel Core i5-7500U CPU (2.50GHz) with **Python 3.6.4**.
 
-**Addict**::
 
-    instanciate:-------- 18,485  ops per second.
-    get:---------------- 18,806  ops per second.
-    get through list:--- 18,599  ops per second.
-    set:---------------- 18,797  ops per second.
-    set through list:--- 18,129  ops per second.
+**Addict** 2.2.1::
 
-
-**Box**::
-
-    instanciate:--------- 4,150,396  ops per second.
-    get:----------------- 1,424,529  ops per second.
-    get through list:----   110,926  ops per second.
-    set:----------------- 1,332,435  ops per second.
-    set through list:----   110,833  ops per second.
+    instanciate:-------- 271,132  ops per second.
+    get:---------------- 276,090  ops per second.
+    get through list:--- 293,773  ops per second.
+    set:---------------- 300,324  ops per second.
+    set through list:--- 282,149  ops per second.
 
 
-**Scalpl**::
+**Box** 3.4.2::
 
-    instanciate:-------- 136,517,371  ops per second.
-    get:----------------  24,918,648  ops per second.
-    get through list:---  12,624,630  ops per second.
-    set:----------------  26,409,542  ops per second.
-    set through list:---  13,765,265  ops per second.
+    instanciate:--------- 4,093,439  ops per second.
+    get:-----------------   957,069  ops per second.
+    get through list:----   164,013  ops per second.
+    set:-----------------   900,466  ops per second.
+    set through list:----   165,522  ops per second.
+
+
+**Scalpl** latest::
+
+    instanciate:-------- 183,879,865  ops per second.
+    get:----------------  14,941,355  ops per second.
+    get through list:---  14,175,349  ops per second.
+    set:----------------  11,320,968  ops per second.
+    set through list:---  11,956,001  ops per second.
 
 
 **dict**::
 
-    instanciate:---------  92,119,547  ops per second.
-    get:----------------- 186,290,996  ops per second.
-    get through list:---- 178,747,154  ops per second.
-    set:----------------- 159,224,669  ops per second.
-    set through list :---  79,294,520  ops per second.
+    instanciate:---------  37,816,714  ops per second.
+    get:-----------------  84,317,032  ops per second.
+    get through list:----  62,480,474  ops per second.
+    set:----------------- 146,484,375  ops per second.
+    set through list :--- 122,473,974  ops per second.
 
 
-As a conclusion and despite being ~10 times slower than the built-in
-``dict``, **Scalpl** is ~20 times faster than Box on simple read/write
-operations, and ~100 times faster when it traverse lists. **Scalpl** is
-also ~1300 times faster than Addict.
+As a conclusion and despite being an order of magniture slower than the built-in
+``dict``, **Scalpl** is faster than Box and Addict by an order of magnitude for any operations.
+Besides, the gap increase in favor of **Scalpl** when wrapping large dictionaries.
 
-However, do not trust benchmarks and test it on a real use-case.
+Keeping in mind that this benchmark may vary depending on your use-case, it is very unlikely that
+**Scalpl** will become a bottleneck of your application.
 
 
 Frequently Asked Questions:
@@ -294,6 +290,7 @@ Frequently Asked Questions:
     
     proxy = Cut(data)
     proxy['it works perfectly'] = 'fine'
+
 
 How to Contribute
 ~~~~~~~~~~~~~~~~~

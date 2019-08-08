@@ -9,5 +9,5 @@ install:
     - pip3 install black
 
 script:
-    - pytest tests.py
-    - black --check scalpl.py tests.py setup.py
+    - pytest
+    - black --check scalpl tests setup.py

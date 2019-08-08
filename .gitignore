@@ -2,11 +2,13 @@
 __pycache__/*
 *.pyc
 
+# Virtual Environment
+env/*
+
 # Packaging
 build/*
 dist/*
 scalpl.egg-info/*
-
 
 # Mypy
 .mypy_cache/*
@@ -18,3 +20,6 @@ htmlcov/*
 # Tests
 reddit.json
 .cache/*
+
+# IDE
+.vscode/
