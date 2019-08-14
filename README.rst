@@ -229,7 +229,7 @@ Here are the results obtained on an Intel Core i5-7500U CPU (2.50GHz) with **Pyt
 
 **Addict** 2.2.1::
 
-    instanciate:-------- 271,132  ops per second.
+    instantiate:-------- 271,132  ops per second.
     get:---------------- 276,090  ops per second.
     get through list:--- 293,773  ops per second.
     set:---------------- 300,324  ops per second.
@@ -238,7 +238,7 @@ Here are the results obtained on an Intel Core i5-7500U CPU (2.50GHz) with **Pyt
 
 **Box** 3.4.2::
 
-    instanciate:--------- 4,093,439  ops per second.
+    instantiate:--------- 4,093,439  ops per second.
     get:-----------------   957,069  ops per second.
     get through list:----   164,013  ops per second.
     set:-----------------   900,466  ops per second.
@@ -247,7 +247,7 @@ Here are the results obtained on an Intel Core i5-7500U CPU (2.50GHz) with **Pyt
 
 **Scalpl** latest::
 
-    instanciate:-------- 183,879,865  ops per second.
+    instantiate:-------- 183,879,865  ops per second.
     get:----------------  14,941,355  ops per second.
     get through list:---  14,175,349  ops per second.
     set:----------------  11,320,968  ops per second.
@@ -256,7 +256,7 @@ Here are the results obtained on an Intel Core i5-7500U CPU (2.50GHz) with **Pyt
 
 **dict**::
 
-    instanciate:---------  37,816,714  ops per second.
+    instantiate:---------  37,816,714  ops per second.
     get:-----------------  84,317,032  ops per second.
     get through list:----  62,480,474  ops per second.
     set:----------------- 146,484,375  ops per second.
