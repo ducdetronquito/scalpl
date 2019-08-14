@@ -76,7 +76,7 @@ class TestDictPerformance(unittest.TestCase):
         )
 
     def test_init(self):
-        self.execute('Wrapper(self.data)', 'instanciate')
+        self.execute('Wrapper(self.data)', 'instantiate')
 
     def test_getitem(self):
         self.execute("Wrapper(self.data)['data']['modhash']", 'get')
