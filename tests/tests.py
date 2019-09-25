@@ -405,6 +405,10 @@ class TestPop:
 
         assert str(error.value) == str(expected_error)
 
+    def test_returns_default_when_key_is_undefined(self, proxy):
+        result = proxy.pop("trainer.bicycle", False)
+        assert result is False
+
     def test_when_index_is_undefined(self, proxy):
         with pytest.raises(IndexError) as error:
             proxy.pop("pokemon[42]")
