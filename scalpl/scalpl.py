@@ -139,8 +139,8 @@ class Cut:
         return self.data.items()
 
     def pop(self, path: str, default: Any = None) -> Any:
-        parent, last_key = self._traverse(self.data, path)
         try:
+            parent, last_key = self._traverse(self.data, path)
             return parent.pop(last_key)
         except IndexError as error:
             if default is not None:
