@@ -3,14 +3,15 @@
 """
 from itertools import chain
 from typing import (
-    Any,
     ItemsView,
     Iterable,
     Iterator,
     KeysView,
+    List,
     Optional,
     Type,
     TypeVar,
+    Union,
     ValuesView,
 )
 
@@ -27,6 +28,54 @@ def index_error(failing_key, original_path, raised_error):
         f"Cannot access index '{failing_key}' in path '{original_path}',"
         f" because of error: {repr(raised_error)}."
     )
+
+
+def type_error(failing_key, original_path, item):
+    raise TypeError(
+        f"Cannot access key '{failing_key}' in path '{original_path}': "
+        f"the element must be a dictionary or a list but is of type '{type(item)}'."
+    )
+
+
+def split_path(path: str, key_separator: str) -> List[Union[str, int]]:
+    sections = path.split(key_separator)
+    result = []
+
+    for section in sections:
+        key, *indexes = section.split("[")
+        result.append(key)
+        if not indexes:
+            continue
+
+        try:
+            for index in indexes:
+                index = index[:-1]
+                result.append(int(index))
+        except ValueError:
+            if index != "" and "]" not in index:
+                raise ValueError(
+                    f"Unable to access item '{index}' in key '{section}': "
+                    "you can only provide integers to access list items."
+                )
+            else:
+                raise ValueError(f"Key '{section}' is badly formated.")
+
+    return result
+
+
+def traverse(data: dict, keys: List[Union[str, int]], original_path: str):
+    value = data
+    try:
+        for key in keys:
+            value = value[key]
+    except KeyError as error:
+        raise key_error(key, original_path, error)
+    except IndexError as error:
+        raise index_error(key, original_path, error)
+    except TypeError:
+        raise type_error(key, original_path, value)
+
+    return value
 
 
 TCut = TypeVar("TCut", bound="Cut")
@@ -56,35 +105,47 @@ class Cut:
         return bool(self.data)
 
     def __contains__(self, path: str) -> bool:
-        parent, last_key = self._traverse(self.data, path)
+        *keys, last_key = split_path(path, self.sep)
+
         try:
-            parent[last_key]
+            item = traverse(data=self.data, keys=keys, original_path=path)
+        except (KeyError, IndexError):
+            return False
+
+        try:
+            item[last_key]
             return True
-        except (IndexError, KeyError):
+        except (KeyError, IndexError):
             return False
 
     def __delitem__(self, path: str) -> None:
-        parent, last_key = self._traverse(self.data, path)
+        *keys, last_key = split_path(path, self.sep)
+        item = traverse(data=self.data, keys=keys, original_path=path)
 
         try:
-            del parent[last_key]
+            del item[last_key]
         except KeyError as error:
             raise key_error(last_key, path, error)
         except IndexError as error:
             raise index_error(last_key, path, error)
+        except TypeError:
+            raise type_error(last_key, path, item)
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other) -> bool:
         return self.data == other
 
-    def __getitem__(self, path: str) -> Any:
-        parent, last_key = self._traverse(self.data, path)
+    def __getitem__(self, path: str):
+        *keys, last_key = split_path(path, self.sep)
+        item = traverse(data=self.data, keys=keys, original_path=path)
 
         try:
-            return parent[last_key]
+            return item[last_key]
         except KeyError as error:
             raise key_error(last_key, path, error)
         except IndexError as error:
             raise index_error(last_key, path, error)
+        except TypeError:
+            raise type_error(last_key, path, item)
 
     def __iter__(self) -> Iterator:
         return iter(self.data)
@@ -92,16 +153,19 @@ class Cut:
     def __len__(self) -> int:
         return len(self.data)
 
-    def __ne__(self, other: Any) -> bool:
-        return self.data != other
+    def __ne__(self, other) -> bool:
+        return not self.data == other
 
-    def __setitem__(self, path: str, value: Any) -> None:
-        parent, last_key = self._traverse(self.data, path)
+    def __setitem__(self, path: str, value) -> None:
+        *keys, last_key = split_path(path, self.sep)
+        item = traverse(data=self.data, keys=keys, original_path=path)
 
         try:
-            parent[last_key] = value
+            item[last_key] = value
         except IndexError as error:
             raise index_error(last_key, path, error)
+        except TypeError:
+            raise type_error(last_key, path, item)
 
     def __str__(self) -> str:
         return str(self.data)
@@ -124,13 +188,11 @@ class Cut:
     ) -> TCut:
         return cls(dict.fromkeys(seq, value))
 
-    def get(self, path: str, default: Optional[Any] = None) -> Any:
+    def get(self, path: str, default=None):
         try:
             return self[path]
         except (KeyError, IndexError) as error:
-            if default is not None:
-                return default
-            raise error
+            return default
 
     def keys(self) -> KeysView:
         return self.data.keys()
@@ -138,47 +200,48 @@ class Cut:
     def items(self) -> ItemsView:
         return self.data.items()
 
-    def pop(self, path: str, default: Any = None) -> Any:
-        try:
-            parent, last_key = self._traverse(self.data, path)
-            return parent.pop(last_key)
-        except IndexError as error:
-            if default is not None:
-                return default
-            raise index_error(last_key, path, error)
-        except KeyError as error:
-            if default is not None:
-                return default
-            raise key_error(last_key, path, error)
+    def pop(self, path: str, *args):
+        *keys, last_key = split_path(path, self.sep)
 
-    def popitem(self) -> Any:
+        try:
+            item = traverse(data=self.data, keys=keys, original_path=path)
+        except (KeyError, IndexError) as error:
+            if args:
+                return args[0]
+            raise error
+
+        try:
+            return item.pop(last_key)
+        except KeyError as error:
+            if args:
+                return args[0]
+            raise key_error(last_key, path, error)
+        except IndexError as error:
+            if args:
+                return args[0]
+            raise index_error(last_key, path, error)
+        except AttributeError as error:
+            raise AttributeError(
+                f"Unable to pop item '{last_key}' in key '{path}': "
+                f"the element must be a dictionary or a list but is of type '{type(item)}'."
+            )
+
+    def popitem(self):
         return self.data.popitem()
 
-    def setdefault(self, path: str, default: Optional[Any] = None) -> Any:
-        parent = self.data
-        *parent_keys, last_key = path.split(self.sep)
-
-        if parent_keys:
-            for _key in parent_keys:
-                parent, _key = self._traverse_list(parent, _key, path)
-                try:
-                    parent = parent[_key]
-                except KeyError:
-                    child: dict = {}
-                    parent[_key] = child
-                    parent = child
-                except IndexError as error:
-                    raise index_error(_key, path, error)
-
-        parent, last_key = self._traverse_list(parent, last_key, path)
+    def setdefault(self, path: str, default=None):
+        *keys, last_key = split_path(path, self.sep)
+        item = traverse(data=self.data, keys=keys, original_path=path)
 
         try:
-            return parent[last_key]
+            return item[last_key]
         except KeyError:
-            parent[last_key] = default
+            item[last_key] = default
             return default
         except IndexError as error:
             raise index_error(last_key, path, error)
+        except TypeError:
+            raise type_error(last_key, path, item)
 
     def update(self, data=None, **kwargs):
         data = data or {}
@@ -193,42 +256,3 @@ class Cut:
 
     def values(self) -> ValuesView:
         return self.data.values()
-
-    def _traverse_list(self, parent, key, original_path: str):
-        key, *str_indexes = key.split("[")
-        if not str_indexes:
-            return parent, key
-
-        try:
-            parent = parent[key]
-        except KeyError as error:
-            raise key_error(key, original_path, error)
-
-        try:
-            for str_index in str_indexes[:-1]:
-                index = int(str_index[:-1])
-                parent = parent[index]
-        except IndexError as error:
-            raise index_error(index, original_path, error)
-
-        try:
-            last_index = int(str_indexes[-1][:-1])
-        except ValueError as error:
-            raise index_error(str_indexes[-1][:-1], original_path, error)
-
-        return parent, last_index
-
-    def _traverse(self, parent, path: str):
-        *parent_keys, last_key = path.split(self.sep)
-        if len(parent_keys) > 0:
-            try:
-                for sub_key in parent_keys:
-                    parent, sub_key = self._traverse_list(parent, sub_key, path)
-                    parent = parent[sub_key]
-            except KeyError as error:
-                raise key_error(sub_key, path, error)
-            except IndexError as error:
-                raise index_error(sub_key, path, error)
-
-        parent, last_key = self._traverse_list(parent, last_key, path)
-        return parent, last_key
