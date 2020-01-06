@@ -15,6 +15,9 @@ from typing import (
     ValuesView,
 )
 
+TCut = TypeVar("TCut", bound="Cut")
+TKeyList = List[Union[str, int]]
+
 
 def key_error(failing_key, original_path, raised_error):
     return KeyError(
@@ -37,9 +40,9 @@ def type_error(failing_key, original_path, item):
     )
 
 
-def split_path(path: str, key_separator: str) -> List[Union[str, int]]:
+def split_path(path: str, key_separator: str) -> TKeyList:
     sections = path.split(key_separator)
-    result = []
+    result = []  # type: TKeyList
 
     for section in sections:
         key, *indexes = section.split("[")
@@ -76,9 +79,6 @@ def traverse(data: dict, keys: List[Union[str, int]], original_path: str):
         raise type_error(key, original_path, value)
 
     return value
-
-
-TCut = TypeVar("TCut", bound="Cut")
 
 
 class Cut:

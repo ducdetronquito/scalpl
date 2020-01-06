@@ -7,9 +7,9 @@ python:
 
 install:
     - pip3 install -e .
-    - pip3 install pytest
-    - pip3 install black
+    - pip3 install pytest black mypy
 
 script:
     - pytest
     - black --check scalpl tests setup.py
+    - mypy scalpl
