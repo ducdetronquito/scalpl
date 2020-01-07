@@ -24,10 +24,11 @@ Outline
 2. `Benefits <https://github.com/ducdetronquito/scalpl#benefits>`_
 3. `Installation <https://github.com/ducdetronquito/scalpl#installation>`_
 4. `Usage <https://github.com/ducdetronquito/scalpl#usage>`_
-5. `Benchmark <https://github.com/ducdetronquito/scalpl#benchmark>`_
-6. `Frequently Asked Questions <https://github.com/ducdetronquito/scalpl#frequently-asked-questions>`_
-7. `How to Contribute <https://github.com/ducdetronquito/scalpl#how-to-contribute>`_
-8. `License <https://github.com/ducdetronquito/scalpl#license>`_
+5. `API Reference <https://github.com/ducdetronquito/scalpl#api-reference>`_
+6. `Benchmark <https://github.com/ducdetronquito/scalpl#benchmark>`_
+7. `Frequently Asked Questions <https://github.com/ducdetronquito/scalpl#frequently-asked-questions>`_
+8. `How to Contribute <https://github.com/ducdetronquito/scalpl#how-to-contribute>`_
+9. `License <https://github.com/ducdetronquito/scalpl#license>`_
 
 
 Overview
@@ -208,6 +209,68 @@ remove all keys.
     shallow_copy = proxy.copy()
 
     proxy.clear()
+
+API Reference
+~~~~~~~~~~~~~
+
+`d[key] <https://docs.python.org/3/library/stdtypes.html#mapping-types-dict>`_
+    Return the item of d with key key. Raises a *KeyError* if key is not in the map.
+
+`d[key] = value <https://docs.python.org/3/library/stdtypes.html#mapping-types-dict>`_
+    Set d[key] to value.
+
+`del d[key] <https://docs.python.org/3/library/stdtypes.html#mapping-types-dict>`_
+    Remove d[key] from d. Raises a KeyError if key is not in the map.
+
+`key in d <https://docs.python.org/3/library/stdtypes.html#mapping-types-dict>`_
+    Return True if d has a key key, else False.
+
+`list(d: dict) <https://docs.python.org/3/library/stdtypes.html#mapping-types-dict>`_
+    Return a list of all the keys used in the dictionary d.
+    
+`len(d: dict) <https://docs.python.org/3/library/stdtypes.html#mapping-types-dict>`_
+    Return the number of items in the dictionary d.
+
+`iter(d: dict) <https://docs.python.org/3/library/stdtypes.html#mapping-types-dict>`_
+    Return an iterator over the keys of the dictionary. This is a shortcut for iter(d.keys()).
+
+`clear() <https://docs.python.org/3/library/stdtypes.html#dict.clear>`_
+    Remove all items from the dictionary.
+
+`copy() <https://docs.python.org/3/library/stdtypes.html#dict.copy>`_
+    Return a shallow copy of the dictionary.
+
+*classmethod* `fromkeys(iterable, [value]) <https://docs.python.org/3/library/stdtypes.html#dict.fromkeys>`_
+    Create a new dictionary with keys from iterable and values set to value.
+    fromkeys() is a class method that returns a new dictionary. value defaults to None.
+
+`get(key: str, [default]) <https://docs.python.org/3/library/stdtypes.html#dict.get>`_
+    Return the value for key if key is in the dictionary, else default.
+    If default is not given, it defaults to None, so that this method never raises a KeyError.
+
+`items() <https://docs.python.org/3/library/stdtypes.html#dict.items>`_
+    Return a new view of the dictionary’s items ((key, value) pairs).
+
+`keys() <https://docs.python.org/3/library/stdtypes.html#dict.keys>`_
+    Return a new view of the dictionary’s keys.
+
+`pop(key: str, [default]) <https://docs.python.org/3/library/stdtypes.html#dict.pop>`_
+    If key is in the dictionary, remove it and return its value, else return default.
+    If default is not given and key is not in the dictionary, a KeyError is raised.
+
+`popitem() <https://docs.python.org/3/library/stdtypes.html#dict.popitem>`_ *-> tuple*
+    Remove and return a (key, value) pair from the dictionary.
+    If the dictionary is empty, calling popitem() raises a KeyError.
+
+`setdefault(key: str, [default]) <https://docs.python.org/3/library/stdtypes.html#dict.setdefault>`_ 
+    If key is in the dictionary, return its value. If not, insert key with a value of default and return default.
+    default defaults to None.
+
+`update([other]) <https://docs.python.org/3/library/stdtypes.html#dict.update>`_ *-> None*
+    Update the dictionary with the key/value pairs from other, overwriting existing keys.
+
+`values() <https://docs.python.org/3/library/stdtypes.html#dict.values>`_
+    Return a new view of the dictionary’s values.
 
 
 Benchmark
