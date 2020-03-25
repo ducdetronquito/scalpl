@@ -330,6 +330,7 @@ class TestGet:
     @pytest.mark.parametrize(
         "data,key,default",
         [
+            ({}, "b", None),
             ({"a": 42}, "b", "default"),
             ({"a": {"b": 42}}, "a.c", "default"),
             ({"a": {"b": {"c": 42}}}, "a.b.d", "default"),
@@ -433,6 +434,7 @@ class TestPop:
     @pytest.mark.parametrize(
         "data,key,default",
         [
+            ({}, "b", None),
             ({"a": 1}, "b", 42),
             ({"a": {"b": 1}}, "c.b", 42),
             ({"a": {"b": 1}}, "a.c", 42),
@@ -561,6 +563,7 @@ class TestSetdefault:
     @pytest.mark.parametrize(
         "data,key,default",
         [
+            ({}, "b", None),
             ({"a": 1}, "b", "default"),
             ({"a": {"b": 1}}, "a.c", "default"),
             ({"a": {"b": {"c": 1}}}, "a.b.d", "default"),
