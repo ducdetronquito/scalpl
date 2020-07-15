@@ -36,6 +36,7 @@ setup(
         "scalpel",
         "wrapper",
     ],
+    python_requires=">=3.6",
     classifiers=[
         "Intended Audience :: Developers",
         "License :: Public Domain",
