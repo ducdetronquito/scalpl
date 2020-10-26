@@ -231,7 +231,16 @@ class Cut:
 
     def setdefault(self, path: str, default=None):
         *keys, last_key = split_path(path, self.sep)
-        item = traverse(data=self.data, keys=keys, original_path=path)
+
+        item = self.data
+        for key in keys:
+            try:
+                item = item[key]
+            except KeyError:
+                item[key] = {}
+                item = item[key]
+            except IndexError as error:
+                raise index_error(key, path, error)
 
         try:
             return item[last_key]
