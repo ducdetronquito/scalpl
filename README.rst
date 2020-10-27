@@ -10,7 +10,7 @@ Scalpl
 .. image:: https://img.shields.io/badge/coverage-100%25-green.svg
     :target: #
 
-.. image:: https://img.shields.io/badge/pypi-v0.4.0-blue.svg
+.. image:: https://img.shields.io/badge/pypi-v0.4.1-blue.svg
     :target: https://pypi.python.org/pypi/scalpl/
 
 .. image:: https://travis-ci.org/ducdetronquito/scalpl.svg?branch=master
