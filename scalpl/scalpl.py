@@ -170,6 +170,9 @@ class Cut:
     def __str__(self) -> str:
         return str(self.data)
 
+    def __repr__(self) -> str:
+        return f"Cut: {self.data}"
+
     def all(self: TCut, path: str) -> Iterator[TCut]:
         """Wrap each item of an Iterable."""
         items = self[path]
