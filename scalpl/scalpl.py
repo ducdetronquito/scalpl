@@ -83,16 +83,16 @@ def traverse(data: dict, keys: List[Union[str, int]], original_path: str):
 
 class Cut:
     """
-        Cut is a simple wrapper over the built-in dict class.
+    Cut is a simple wrapper over the built-in dict class.
 
-        It enables the standard dict API to operate on nested dictionnaries
-        and cut accross list item by using dot-separated string keys.
+    It enables the standard dict API to operate on nested dictionnaries
+    and cut accross list item by using dot-separated string keys.
 
-        ex:
-            query = {...} # Any dict structure
-            proxy = Cut(query)
-            proxy['pokemon[0].level']
-            proxy['pokemon[0].level'] = 666
+    ex:
+        query = {...} # Any dict structure
+        proxy = Cut(query)
+        proxy['pokemon[0].level']
+        proxy['pokemon[0].level'] = 666
     """
 
     __slots__ = ("data", "sep")

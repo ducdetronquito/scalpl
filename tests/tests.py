@@ -475,7 +475,10 @@ class TestPop:
 
     @pytest.mark.parametrize(
         "data,path,failing_index",
-        [({"a": [[1]]}, "a[1][0]", 1), ({"a": [{"b": 1}]}, "a[1].b", 1),],
+        [
+            ({"a": [[1]]}, "a[1][0]", 1),
+            ({"a": [{"b": 1}]}, "a[1].b", 1),
+        ],
     )
     def test_list_index_error_when_no_default_provided(
         self, dict_type, data, path, failing_index
