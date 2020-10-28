@@ -83,16 +83,16 @@ def traverse(data: dict, keys: List[Union[str, int]], original_path: str):
 
 class Cut:
     """
-        Cut is a simple wrapper over the built-in dict class.
+    Cut is a simple wrapper over the built-in dict class.
 
-        It enables the standard dict API to operate on nested dictionnaries
-        and cut accross list item by using dot-separated string keys.
+    It enables the standard dict API to operate on nested dictionnaries
+    and cut accross list item by using dot-separated string keys.
 
-        ex:
-            query = {...} # Any dict structure
-            proxy = Cut(query)
-            proxy['pokemon[0].level']
-            proxy['pokemon[0].level'] = 666
+    ex:
+        query = {...} # Any dict structure
+        proxy = Cut(query)
+        proxy['pokemon[0].level']
+        proxy['pokemon[0].level'] = 666
     """
 
     __slots__ = ("data", "sep")
@@ -170,6 +170,9 @@ class Cut:
     def __str__(self) -> str:
         return str(self.data)
 
+    def __repr__(self) -> str:
+        return f"Cut: {self.data}"
+
     def all(self: TCut, path: str) -> Iterator[TCut]:
         """Wrap each item of an Iterable."""
         items = self[path]
@@ -231,7 +234,16 @@ class Cut:
 
     def setdefault(self, path: str, default=None):
         *keys, last_key = split_path(path, self.sep)
-        item = traverse(data=self.data, keys=keys, original_path=path)
+
+        item = self.data
+        for key in keys:
+            try:
+                item = item[key]
+            except KeyError:
+                item[key] = {}
+                item = item[key]
+            except IndexError as error:
+                raise index_error(key, path, error)
 
         try:
             return item[last_key]

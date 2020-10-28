@@ -475,7 +475,10 @@ class TestPop:
 
     @pytest.mark.parametrize(
         "data,path,failing_index",
-        [({"a": [[1]]}, "a[1][0]", 1), ({"a": [{"b": 1}]}, "a[1].b", 1),],
+        [
+            ({"a": [[1]]}, "a[1][0]", 1),
+            ({"a": [{"b": 1}]}, "a[1].b", 1),
+        ],
     )
     def test_list_index_error_when_no_default_provided(
         self, dict_type, data, path, failing_index
@@ -553,6 +556,7 @@ class TestSetdefault:
             ({"a": {"b": 1}}, "a.c", None),
             ({"a": {"b": {"c": 1}}}, "a.b.d", None),
             ({"a": [{"b": 1}]}, "a[0].c", None),
+            ({"a": {"b": {"c": 42}}}, "a.d.e.f", None),
         ],
     )
     def test_setdefault(self, dict_type, data, key, result):
@@ -568,6 +572,7 @@ class TestSetdefault:
             ({"a": {"b": 1}}, "a.c", "default"),
             ({"a": {"b": {"c": 1}}}, "a.b.d", "default"),
             ({"a": [{"b": 1}]}, "a[0].c", "default"),
+            ({"a": {"b": {"c": 42}}}, "a.d.e.f", "default"),
         ],
     )
     def test_with_default(self, dict_type, data, key, default):
@@ -586,13 +591,28 @@ class TestSetdefault:
         )
         assert str(error.value) == str(expected_error)
 
-    def test_index_error(self, dict_type):
-        proxy = Cut(dict_type({"a": [42]}))
+    @pytest.mark.parametrize(
+        "data,key,error_message",
+        [
+            (
+                {"a": [42]},
+                "a[1]",
+                f"Cannot access index '1' in path 'a[1]', because of error:",
+            ),
+            (
+                {"a": [{"b": 1}]},
+                "a[1].c",
+                f"Cannot access index '1' in path 'a[1].c', because of error:",
+            ),
+        ],
+    )
+    def test_nested_index_error(self, dict_type, data, key, error_message):
+        proxy = Cut(dict_type(data))
         with pytest.raises(IndexError) as error:
-            proxy.setdefault("a[1]")
+            proxy.setdefault(key, 42)
 
-        expected_error = IndexError(
-            "Cannot access index '1' in path 'a[1]', "
-            f"because of error: {repr(IndexError('list index out of range'))}."
+        expected_error_message = (
+            f"{error_message} {repr(IndexError('list index out of range'))}."
         )
-        assert str(error.value) == str(expected_error)
+
+        assert str(error.value) == expected_error_message
