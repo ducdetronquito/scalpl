@@ -6,14 +6,14 @@ with open("README.rst", "r", encoding="utf-8") as f:
 setup(
     name="scalpl",
     packages=["scalpl"],
-    version="0.4.1",
+    version="0.4.2",
     description=("A lightweight wrapper to operate on nested dictionaries seamlessly."),
     long_description=readme,
     author="Guillaume Paulet",
     author_email="guillaume.paulet@giome.fr",
     license="Public Domain",
     url="https://github.com/ducdetronquito/scalpl",
-    download_url=("https://github.com/ducdetronquito/scalpl/archive/" "0.4.1.tar.gz"),
+    download_url=("https://github.com/ducdetronquito/scalpl/archive/" "0.4.2.tar.gz"),
     tests_require=[
         "addict",
         "mypy",
