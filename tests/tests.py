@@ -123,6 +123,17 @@ class TestTraverse:
         assert str(error.value) == str(expected_error)
 
 
+class TestInit:
+    def test_without_data(self):
+        proxy = Cut()
+        assert proxy.data == {}
+
+    def test_with_an_empty_dict(self, dict_type):
+        data = dict_type()
+        proxy = Cut(data)
+        assert proxy.data is data
+
+
 @pytest.mark.parametrize("data,result", [({"a": 42}, True), ({}, False)])
 def test_bool(dict_type, data, result):
     proxy = Cut(dict_type(data))

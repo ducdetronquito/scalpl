@@ -98,7 +98,10 @@ class Cut:
     __slots__ = ("data", "sep")
 
     def __init__(self, data: Optional[dict] = None, sep: str = ".") -> None:
-        self.data = data or {}
+        if data is None:
+            self.data = {}
+        else:
+            self.data = data
         self.sep = sep
 
     def __bool__(self) -> bool:
