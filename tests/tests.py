@@ -36,6 +36,7 @@ class TestSplitPath:
             ("users0][1][2][3]", ["users0]", 1, 2, 3]),
             (0, [0]),
             ("0.a", [0, "a"]),
+            ("0[1][2]", [0, 1, 2]),
         ],
     )
     def test_split_path(self, path, result):
@@ -92,6 +93,8 @@ class TestTraverse:
             ({"a": [[21], [42]]}, ["a", 1, 0], "a[1][0]", 42),
             ([{"a": 42}], [0], 0, {"a": 42}),
             ([{"a": 42}], [0, "a"], "0.a", 42),
+            ([{"0": [42]}], [0, "0", 0], "0.0[0]", 42),
+            ([{1: [0, 0, 42]}], [0, 1, 2], "0.1[2]", 42),
         ],
     )
     def test_traverse(self, data, keys, original_path, result):
