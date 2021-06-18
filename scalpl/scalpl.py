@@ -122,6 +122,9 @@ class Cut:
         proxy['pokemon[0].level'] = 666
     """
 
+    split_path = split_path
+    traverse = traverse
+
     __slots__ = ("data", "sep")
 
     def __init__(self, data: Optional[dict] = None, sep: str = ".") -> None:
@@ -135,10 +138,10 @@ class Cut:
         return bool(self.data)
 
     def __contains__(self, path: str) -> bool:
-        *keys, last_key = split_path(path, self.sep)
+        *keys, last_key = Cut.split_path(path, self.sep)
 
         try:
-            item = traverse(data=self.data, keys=keys, original_path=path)
+            item = Cut.traverse(data=self.data, keys=keys, original_path=path)
         except (KeyError, IndexError):
             return False
 
@@ -149,8 +152,8 @@ class Cut:
             return False
 
     def __delitem__(self, path: str) -> None:
-        *keys, last_key = split_path(path, self.sep)
-        item = traverse(data=self.data, keys=keys, original_path=path)
+        *keys, last_key = Cut.split_path(path, self.sep)
+        item = Cut.traverse(data=self.data, keys=keys, original_path=path)
 
         try:
             del item[last_key]
@@ -165,8 +168,8 @@ class Cut:
         return self.data == other
 
     def __getitem__(self, path: str):
-        *keys, last_key = split_path(path, self.sep)
-        item = traverse(data=self.data, keys=keys, original_path=path)
+        *keys, last_key = Cut.split_path(path, self.sep)
+        item = Cut.traverse(data=self.data, keys=keys, original_path=path)
 
         try:
             return item[last_key]
@@ -187,8 +190,8 @@ class Cut:
         return not self.data == other
 
     def __setitem__(self, path: str, value) -> None:
-        *keys, last_key = split_path(path, self.sep)
-        item = traverse(data=self.data, keys=keys, original_path=path)
+        *keys, last_key = Cut.split_path(path, self.sep)
+        item = Cut.traverse(data=self.data, keys=keys, original_path=path)
 
         try:
             item[last_key] = value
@@ -232,10 +235,10 @@ class Cut:
         return self.data.items()
 
     def pop(self, path: str, *args):
-        *keys, last_key = split_path(path, self.sep)
+        *keys, last_key = Cut.split_path(path, self.sep)
 
         try:
-            item = traverse(data=self.data, keys=keys, original_path=path)
+            item = Cut.traverse(data=self.data, keys=keys, original_path=path)
         except (KeyError, IndexError) as error:
             if args:
                 return args[0]
@@ -261,7 +264,7 @@ class Cut:
         return self.data.popitem()
 
     def setdefault(self, path: str, default=None):
-        *keys, last_key = split_path(path, self.sep)
+        *keys, last_key = Cut.split_path(path, self.sep)
 
         item = self.data
         for key in keys:
