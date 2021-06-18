@@ -1,7 +1,7 @@
 from collections import defaultdict, OrderedDict
 from copy import deepcopy
 from functools import partial
-from scalpl.scalpl import Cut, split_path, traverse
+from scalpl.scalpl import Cut, is_index, split_path, traverse
 import pytest
 from types import GeneratorType
 
@@ -9,6 +9,15 @@ from types import GeneratorType
 @pytest.fixture(params=[dict, OrderedDict, partial(defaultdict, None)])
 def dict_type(request):
     return request.param
+
+
+class TestIsIndex:
+    @pytest.mark.parametrize(
+        "key,result",
+        [("0", True), ("-1", True), ("1e1", False), ("-1e1", False), ("00", False), ("-0", False)],
+    )
+    def test_is_index(self, key, result):
+        assert is_index(key) == result
 
 
 class TestSplitPath:
@@ -25,6 +34,8 @@ class TestSplitPath:
             ("users[0][1].name", ["users", 0, 1, "name"]),
             ("users.names[0][1]", ["users", "names", 0, 1]),
             ("users0][1][2][3]", ["users0]", 1, 2, 3]),
+            (0, [0]),
+            ("0.a", [0, "a"]),
         ],
     )
     def test_split_path(self, path, result):
@@ -79,6 +90,8 @@ class TestTraverse:
             ({"a": {"b": {"c": 42}}}, ["a", "b", "c"], "a.b.c", 42),
             ({"a": [42]}, ["a", 0], "a[0]", 42),
             ({"a": [[21], [42]]}, ["a", 1, 0], "a[1][0]", 42),
+            ([{"a": 42}], [0], 0, {"a": 42}),
+            ([{"a": 42}], [0, "a"], "0.a", 42),
         ],
     )
     def test_traverse(self, data, keys, original_path, result):
@@ -91,9 +104,7 @@ class TestTraverse:
             ({"users": 42}, ["users", 0], "users[0]", "0", int),
         ],
     )
-    def test_type_error(
-        self, data, keys, original_path, failing_key, failing_item_type
-    ):
+    def test_type_error(self, data, keys, original_path, failing_key, failing_item_type):
         with pytest.raises(TypeError) as error:
             traverse(data=data, keys=keys, original_path=original_path)
 
@@ -471,9 +482,7 @@ class TestPop:
             ({"a": {"b": {"c": 1}}}, "a.b.d", "d"),
         ],
     )
-    def test_key_error_when_no_default_provided(
-        self, dict_type, data, path, failing_key
-    ):
+    def test_key_error_when_no_default_provided(self, dict_type, data, path, failing_key):
         proxy = Cut(dict_type(deepcopy(data)))
         with pytest.raises(KeyError) as error:
             proxy.pop(path)
@@ -491,9 +500,7 @@ class TestPop:
             ({"a": [{"b": 1}]}, "a[1].b", 1),
         ],
     )
-    def test_list_index_error_when_no_default_provided(
-        self, dict_type, data, path, failing_index
-    ):
+    def test_list_index_error_when_no_default_provided(self, dict_type, data, path, failing_index):
         proxy = Cut(dict_type(deepcopy(data)))
         with pytest.raises(IndexError) as error:
             proxy.pop(path)
@@ -622,8 +629,6 @@ class TestSetdefault:
         with pytest.raises(IndexError) as error:
             proxy.setdefault(key, 42)
 
-        expected_error_message = (
-            f"{error_message} {repr(IndexError('list index out of range'))}."
-        )
+        expected_error_message = f"{error_message} {repr(IndexError('list index out of range'))}."
 
         assert str(error.value) == expected_error_message

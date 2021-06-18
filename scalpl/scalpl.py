@@ -40,13 +40,40 @@ def type_error(failing_key, original_path, item):
     )
 
 
-def split_path(path: str, key_separator: str) -> TKeyList:
+"""
+    Only indexing integers are allowed.
+    Meaning that scientific and zero-starting integers
+    are not regarded as index
+"""
+
+
+def is_index(key: str):
+
+    if "." in key:
+        return False
+    if "e" in key:
+        return False
+    if key.startswith("0") and len(key) > 1:
+        return False
+    if key.startswith("-"):
+        return key[1:].isdigit() and key[1] != "0"
+    return key.isdigit()
+
+
+def split_path(path: Union[str, int], key_separator: str) -> TKeyList:
+    if isinstance(path, int):
+        result = [0]
+        return result
+
     sections = path.split(key_separator)
     result = []  # type: TKeyList
 
     for section in sections:
         key, *indexes = section.split("[")
-        result.append(key)
+        if is_index(key):
+            result.append(int(key))
+        else:
+            result.append(key)
         if not indexes:
             continue
 
@@ -66,7 +93,7 @@ def split_path(path: str, key_separator: str) -> TKeyList:
     return result
 
 
-def traverse(data: dict, keys: List[Union[str, int]], original_path: str):
+def traverse(data: Union[dict, list], keys: List[Union[str, int]], original_path: str):
     value = data
     try:
         for key in keys:
@@ -189,9 +216,7 @@ class Cut:
         return self.data.copy()
 
     @classmethod
-    def fromkeys(
-        cls: Type[TCut], seq: Iterable, value: Optional[Iterable] = None
-    ) -> TCut:
+    def fromkeys(cls: Type[TCut], seq: Iterable, value: Optional[Iterable] = None) -> TCut:
         return cls(dict.fromkeys(seq, value))
 
     def get(self, path: str, default=None):
