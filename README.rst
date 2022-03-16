@@ -224,43 +224,43 @@ You can run this benchmark on your machine with the following command:
 
     python3 ./benchmarks/performance_comparison.py
 
-Here are the results obtained on an Intel Core i5-7500U CPU (2.50GHz) with **Python 3.6.4**.
+Here are the results obtained on an AMD 5950x with **Python 3.10.2**.
 
 
-**Addict** 2.2.1::
+**Addict** 2.4.0::
 
-    instantiate:-------- 271,132  ops per second.
-    get:---------------- 276,090  ops per second.
-    get through list:--- 293,773  ops per second.
-    set:---------------- 300,324  ops per second.
-    set through list:--- 282,149  ops per second.
+    instantiate:--------       773,292  ops per second.
+    get:---------------- 1,197,604,715  ops per second.
+    get through list:---   647,249,139  ops per second.
+    set:----------------   130,434,783  ops per second.
+    set through list:---    91,240,875  ops per second.
 
 
-**Box** 3.4.2::
+**Box** 6.0.1::
 
-    instantiate:--------- 4,093,439  ops per second.
-    get:-----------------   957,069  ops per second.
-    get through list:----   164,013  ops per second.
-    set:-----------------   900,466  ops per second.
-    set through list:----   165,522  ops per second.
+    instantiate:---------    382,330  ops per second.
+    get:----------------- 57,853,629  ops per second.
+    get through list:---- 25,509,119  ops per second.
+    set:----------------- 29,902,815  ops per second.
+    set through list:---- 18,625,442  ops per second.
 
 
 **Scalpl** latest::
 
-    instantiate:-------- 183,879,865  ops per second.
-    get:----------------  14,941,355  ops per second.
-    get through list:---  14,175,349  ops per second.
-    set:----------------  11,320,968  ops per second.
-    set through list:---  11,956,001  ops per second.
+    instantiate:-------- 367,421,940  ops per second.
+    get:----------------  71,882,113  ops per second.
+    get through list:---  37,406,484  ops per second.
+    set:----------------  68,681,318  ops per second.
+    set through list:---  40,647,652  ops per second.
 
 
 **dict**::
 
-    instantiate:---------  37,816,714  ops per second.
-    get:-----------------  84,317,032  ops per second.
-    get through list:----  62,480,474  ops per second.
-    set:----------------- 146,484,375  ops per second.
-    set through list :--- 122,473,974  ops per second.
+    instantiate:---------   612,870,255  ops per second.
+    get:----------------- 1,675,977,835  ops per second.
+    get through list:----   746,268,647  ops per second.
+    set:----------------- 1,388,888,605  ops per second.
+    set through list :---   798,934,707  ops per second.
 
 
 As a conclusion and despite being an order of magniture slower than the built-in
