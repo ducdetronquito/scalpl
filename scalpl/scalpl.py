@@ -61,13 +61,15 @@ def split_path(path: str, key_separator: str) -> TKeyList:
                     "you can only provide integers to access list items."
                 )
             else:
-                raise ValueError(f"Key '{section}' is badly formated.")
+                raise ValueError(f"Key '{section}' is badly formatted.")
 
     return result
 
 
 def traverse(data: dict, keys: List[Union[str, int]], original_path: str):
     value = data
+    #: unlikely, but `key` can be referenced before assignment.
+    key = None
     try:
         for key in keys:
             value = value[key]
@@ -81,12 +83,12 @@ def traverse(data: dict, keys: List[Union[str, int]], original_path: str):
     return value
 
 
-class Cut:
+class Cut(object):
     """
     Cut is a simple wrapper over the built-in dict class.
 
-    It enables the standard dict API to operate on nested dictionnaries
-    and cut accross list item by using dot-separated string keys.
+    It enables the standard dict API to operate on nested dictionaries
+    and cut across list item by using dot-separated string keys.
 
     ex:
         query = {...} # Any dict structure
@@ -116,10 +118,11 @@ class Cut:
             return False
 
         try:
-            item[last_key]
-            return True
+            _ = item[last_key]
         except (KeyError, IndexError):
             return False
+
+        return True
 
     def __delitem__(self, path: str) -> None:
         *keys, last_key = split_path(path, self.sep)
