@@ -119,9 +119,10 @@ class Cut:
 
         try:
             _ = item[last_key]
-            return True
         except (KeyError, IndexError):
             return False
+
+        return True
 
     def __delitem__(self, path: str) -> None:
         *keys, last_key = split_path(path, self.sep)
