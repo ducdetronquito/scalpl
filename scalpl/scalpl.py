@@ -83,7 +83,7 @@ def traverse(data: dict, keys: List[Union[str, int]], original_path: str):
     return value
 
 
-class Cut:
+class Cut(object):
     """
     Cut is a simple wrapper over the built-in dict class.
 
