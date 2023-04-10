@@ -68,6 +68,8 @@ def split_path(path: str, key_separator: str) -> TKeyList:
 
 def traverse(data: dict, keys: List[Union[str, int]], original_path: str):
     value = data
+    #: unlikely, but `key` can be referenced before assignment.
+    key = None
     try:
         for key in keys:
             value = value[key]
@@ -85,8 +87,8 @@ class Cut:
     """
     Cut is a simple wrapper over the built-in dict class.
 
-    It enables the standard dict API to operate on nested dictionnaries
-    and cut accross list item by using dot-separated string keys.
+    It enables the standard dict API to operate on nested dictionaries
+    and cut across list item by using dot-separated string keys.
 
     ex:
         query = {...} # Any dict structure
@@ -116,7 +118,7 @@ class Cut:
             return False
 
         try:
-            item[last_key]
+            _ = item[last_key]
             return True
         except (KeyError, IndexError):
             return False
