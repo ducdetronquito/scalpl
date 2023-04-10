@@ -61,7 +61,7 @@ def split_path(path: str, key_separator: str) -> TKeyList:
                     "you can only provide integers to access list items."
                 )
             else:
-                raise ValueError(f"Key '{section}' is badly formated.")
+                raise ValueError(f"Key '{section}' is badly formatted.")
 
     return result
 
